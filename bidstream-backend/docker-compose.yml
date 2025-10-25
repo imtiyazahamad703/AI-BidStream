@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+# Network configuration and base setup will go here
+networks:
+  bidstream-network:
+    driver: bridge
