@@ -16,3 +16,11 @@ networks:
       - "3306:3306"
     networks:
       - bidstream-network
+
+  redis:
+    image: redis:7.0
+    container_name: bidstream_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - bidstream-network
