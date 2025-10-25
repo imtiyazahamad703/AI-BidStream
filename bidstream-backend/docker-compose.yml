@@ -5,3 +5,14 @@ services:
 networks:
   bidstream-network:
     driver: bridge
+
+  mysql:
+    image: mysql:8.0
+    container_name: bidstream_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: bidstream_dev
+    ports:
+      - "3306:3306"
+    networks:
+      - bidstream-network
