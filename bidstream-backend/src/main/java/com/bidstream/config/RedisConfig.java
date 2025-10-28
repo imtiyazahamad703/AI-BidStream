@@ -28,4 +28,11 @@ public class RedisConfig {
         template.setValueSerializer(new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer());
         return template;
     }
+
+    @Bean(destroyMethod = "shutdown")
+    public org.redisson.api.RedissonClient redissonClient() {
+        org.redisson.config.Config config = new org.redisson.config.Config();
+        config.useSingleServer().setAddress("redis://" + redisHost + ":" + redisPort);
+        return org.redisson.Redisson.create(config);
+    }
 }
