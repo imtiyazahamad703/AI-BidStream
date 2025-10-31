@@ -1,9 +1,22 @@
 package com.bidstream.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class UserRegistrationDto {
+    @NotBlank
+    @Email
     private String email;
+    
+    @NotBlank
+    @Size(min = 6)
     private String password;
+    
+    @NotBlank
     private String fullName;
+    
+    @NotBlank
     private String role;
 
     // Getters and Setters
