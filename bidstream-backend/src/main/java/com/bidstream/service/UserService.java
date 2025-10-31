@@ -4,6 +4,7 @@ import com.bidstream.dto.UserRegistrationDto;
 import com.bidstream.entity.Role;
 import com.bidstream.entity.User;
 import com.bidstream.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -27,8 +30,7 @@ public class UserService {
         user.setFullName(dto.getFullName());
         user.setRole(Role.valueOf(dto.getRole().toUpperCase()));
         
-        // Password hashing will be implemented in the next commit
-        user.setPassword(dto.getPassword()); 
+        user.setPassword(passwordEncoder.encode(dto.getPassword())); 
 
         return userRepository.save(user);
     }
