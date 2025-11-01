@@ -1,5 +1,6 @@
 package com.bidstream.controller;
 
+import com.bidstream.dto.LoginRequestDto;
 import com.bidstream.dto.UserRegistrationDto;
 import com.bidstream.entity.User;
 import com.bidstream.service.UserService;
@@ -13,14 +14,22 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final com.bidstream.service.AuthService authService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, com.bidstream.service.AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@Valid @RequestBody UserRegistrationDto registrationDto) {
         User user = userService.registerUser(registrationDto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequest) {
+        String token = authService.authenticate(loginRequest);
+        return ResponseEntity.ok(token);
     }
 }
