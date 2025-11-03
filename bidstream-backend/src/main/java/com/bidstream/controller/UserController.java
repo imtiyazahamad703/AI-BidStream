@@ -15,4 +15,10 @@ public class UserController {
     public ResponseEntity<String> getSellerDashboard() {
         return ResponseEntity.ok("Seller dashboard data");
     }
+
+    @GetMapping("/bidder-dashboard")
+    @PreAuthorize("hasRole('BIDDER')")
+    public ResponseEntity<String> getBidderDashboard() {
+        return ResponseEntity.ok("Bidder dashboard data");
+    }
 }
