@@ -33,4 +33,12 @@ public class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void testLoginValidation() throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+                .andExpect(status().isBadRequest());
+    }
 }
