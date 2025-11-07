@@ -30,4 +30,11 @@ public class UserControllerTest {
         mockMvc.perform(get("/api/users/seller-dashboard"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @WithMockUser(username = "test@example.com")
+    void testGetCurrentUserProfile() throws Exception {
+        mockMvc.perform(get("/api/users/me"))
+                .andExpect(status().isOk());
+    }
 }
