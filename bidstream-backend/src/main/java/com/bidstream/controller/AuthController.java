@@ -1,6 +1,7 @@
 package com.bidstream.controller;
 
 import com.bidstream.dto.LoginRequestDto;
+import com.bidstream.dto.LoginResponseDto;
 import com.bidstream.dto.UserRegistrationDto;
 import com.bidstream.entity.User;
 import com.bidstream.service.UserService;
@@ -28,8 +29,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDto loginRequest) {
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequest) {
         String token = authService.authenticate(loginRequest);
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(new LoginResponseDto(token));
     }
 }
