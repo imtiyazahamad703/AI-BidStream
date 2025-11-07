@@ -19,6 +19,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     public String getEmail() {
         return email;
     }
@@ -49,5 +52,13 @@ public class User extends BaseEntity {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
