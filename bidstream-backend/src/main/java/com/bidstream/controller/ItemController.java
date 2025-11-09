@@ -1,5 +1,6 @@
 package com.bidstream.controller;
 
+import com.bidstream.dto.ItemRequestDto;
 import com.bidstream.entity.Item;
 import com.bidstream.service.ItemService;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,15 @@ public class ItemController {
 
     @PostMapping
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<Item> createItem(@RequestBody Item item) {
+    public ResponseEntity<Item> createItem(@RequestBody ItemRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
+        
+        Item item = new Item();
+        item.setName(requestDto.getName());
+        item.setDescription(requestDto.getDescription());
+        item.setStartingPrice(requestDto.getStartingPrice());
+        item.setAttributes(requestDto.getAttributes());
         
         Item createdItem = itemService.createItem(item, sellerEmail);
         return ResponseEntity.ok(createdItem);
