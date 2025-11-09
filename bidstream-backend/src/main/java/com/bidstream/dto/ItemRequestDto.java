@@ -1,11 +1,22 @@
 package com.bidstream.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.util.Map;
 
 public class ItemRequestDto {
+    
+    @NotBlank(message = "Item name is required")
     private String name;
+    
+    @NotBlank(message = "Item description is required")
     private String description;
+    
+    @NotNull(message = "Starting price is required")
+    @Positive(message = "Starting price must be positive")
     private Double startingPrice;
+    
     private Map<String, Object> attributes;
 
     public String getName() { return name; }
