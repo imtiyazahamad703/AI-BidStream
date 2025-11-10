@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/items")
@@ -35,5 +36,15 @@ public class ItemController {
         
         Item createdItem = itemService.createItem(item, sellerEmail);
         return ResponseEntity.ok(createdItem);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<List<Item>> getSellerItems() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+        
+        List<Item> items = itemService.getItemsBySeller(sellerEmail);
+        return ResponseEntity.ok(items);
     }
 }
