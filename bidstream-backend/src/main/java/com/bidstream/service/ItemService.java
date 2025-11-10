@@ -5,6 +5,7 @@ import com.bidstream.repository.mongo.ItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemService {
@@ -27,5 +28,9 @@ public class ItemService {
 
     public List<Item> getItemsBySeller(String sellerEmail) {
         return itemRepository.findBySellerEmail(sellerEmail);
+    }
+
+    public Optional<Item> getItemById(String id) {
+        return itemRepository.findById(id);
     }
 }

@@ -47,4 +47,12 @@ public class ItemController {
         List<Item> items = itemService.getItemsBySeller(sellerEmail);
         return ResponseEntity.ok(items);
     }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<Item> getItemDetails(@PathVariable String id) {
+        return itemService.getItemById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
