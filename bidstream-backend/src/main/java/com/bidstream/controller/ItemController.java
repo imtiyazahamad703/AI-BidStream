@@ -51,8 +51,16 @@ public class ItemController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<Item> getItemDetails(@PathVariable String id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+        
         return itemService.getItemById(id)
-                .map(ResponseEntity::ok)
+                .map(item -> {
+                    if (!item.getSellerEmail().equals(sellerEmail)) {
+                        throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
+                    }
+                    return ResponseEntity.ok(item);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 }
