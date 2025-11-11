@@ -66,7 +66,7 @@ public class ItemController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<Item> updateItem(@PathVariable String id, @RequestBody ItemRequestDto requestDto) {
+    public ResponseEntity<Item> updateItem(@PathVariable String id, @Valid @RequestBody ItemRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
         
