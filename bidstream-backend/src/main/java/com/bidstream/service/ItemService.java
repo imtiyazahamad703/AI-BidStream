@@ -33,4 +33,25 @@ public class ItemService {
     public Optional<Item> getItemById(String id) {
         return itemRepository.findById(id);
     }
+
+    public Item updateItem(String id, Item updatedData, String sellerEmail) {
+        return itemRepository.findById(id).map(existingItem -> {
+            if (!existingItem.getSellerEmail().equals(sellerEmail)) {
+                throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
+            }
+            if (updatedData.getName() != null) {
+                existingItem.setName(updatedData.getName());
+            }
+            if (updatedData.getDescription() != null) {
+                existingItem.setDescription(updatedData.getDescription());
+            }
+            if (updatedData.getStartingPrice() != null) {
+                existingItem.setStartingPrice(updatedData.getStartingPrice());
+            }
+            if (updatedData.getAttributes() != null) {
+                existingItem.setAttributes(updatedData.getAttributes());
+            }
+            return itemRepository.save(existingItem);
+        }).orElseThrow(() -> new IllegalArgumentException("Item not found"));
+    }
 }
