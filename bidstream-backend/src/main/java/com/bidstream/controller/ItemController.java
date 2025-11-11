@@ -63,4 +63,20 @@ public class ItemController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<Item> updateItem(@PathVariable String id, @RequestBody ItemRequestDto requestDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+        
+        Item updatedData = new Item();
+        updatedData.setName(requestDto.getName());
+        updatedData.setDescription(requestDto.getDescription());
+        updatedData.setStartingPrice(requestDto.getStartingPrice());
+        updatedData.setAttributes(requestDto.getAttributes());
+
+        Item updatedItem = itemService.updateItem(id, updatedData, sellerEmail);
+        return ResponseEntity.ok(updatedItem);
+    }
 }
