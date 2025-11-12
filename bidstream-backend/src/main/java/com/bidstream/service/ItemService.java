@@ -54,4 +54,15 @@ public class ItemService {
             return itemRepository.save(existingItem);
         }).orElseThrow(() -> new IllegalArgumentException("Item not found"));
     }
+
+    public void deleteItem(String id, String sellerEmail) {
+        Item item = itemRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Item not found"));
+            
+        if (!item.getSellerEmail().equals(sellerEmail)) {
+            throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
+        }
+        
+        itemRepository.delete(item);
+    }
 }
