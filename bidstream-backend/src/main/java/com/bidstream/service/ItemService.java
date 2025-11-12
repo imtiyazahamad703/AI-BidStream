@@ -63,6 +63,10 @@ public class ItemService {
             throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
         }
         
+        if (item.getAuctionId() != null) {
+            throw new IllegalStateException("Cannot delete an item that is linked to an auction");
+        }
+        
         itemRepository.delete(item);
     }
 }

@@ -19,6 +19,9 @@ public class Item {
     // Dynamic item attributes
     private Map<String, Object> attributes;
     
+    // Linking to auction (Phase 4)
+    private Long auctionId;
+    
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getId() { return id; }
@@ -33,6 +36,8 @@ public class Item {
     public void setSellerEmail(String sellerEmail) { this.sellerEmail = sellerEmail; }
     public Map<String, Object> getAttributes() { return attributes; }
     public void setAttributes(Map<String, Object> attributes) { this.attributes = attributes; }
+    public Long getAuctionId() { return auctionId; }
+    public void setAuctionId(Long auctionId) { this.auctionId = auctionId; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
