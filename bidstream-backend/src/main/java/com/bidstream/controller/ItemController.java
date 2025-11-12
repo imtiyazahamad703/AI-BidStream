@@ -79,4 +79,14 @@ public class ItemController {
         Item updatedItem = itemService.updateItem(id, updatedData, sellerEmail);
         return ResponseEntity.ok(updatedItem);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<Void> deleteItem(@PathVariable String id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+        
+        itemService.deleteItem(id, sellerEmail);
+        return ResponseEntity.noContent().build();
+    }
 }
