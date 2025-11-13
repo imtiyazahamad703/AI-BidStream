@@ -12,5 +12,6 @@ import java.util.List;
 public interface ItemRepository extends MongoRepository<Item, String> {
     Page<Item> findBySellerEmail(String sellerEmail, Pageable pageable);
     Page<Item> findByNameContainingIgnoreCaseAndSellerEmail(String name, String sellerEmail, Pageable pageable);
+    Page<Item> findBySellerEmailAndStartingPriceBetween(String sellerEmail, Double minPrice, Double maxPrice, Pageable pageable);
     List<Item> findBySellerEmail(String sellerEmail);
 }

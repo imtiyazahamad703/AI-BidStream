@@ -45,6 +45,8 @@ public class ItemController {
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<Page<Item>> getSellerItems(
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -54,6 +56,8 @@ public class ItemController {
         Page<Item> items;
         if (search != null && !search.trim().isEmpty()) {
             items = itemService.searchItemsBySellerAndName(search, sellerEmail, pageable);
+        } else if (minPrice != null && maxPrice != null) {
+            items = itemService.filterItemsByPrice(sellerEmail, minPrice, maxPrice, pageable);
         } else {
             items = itemService.getItemsBySeller(sellerEmail, pageable);
         }
