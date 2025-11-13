@@ -2,6 +2,8 @@ package com.bidstream.service;
 
 import com.bidstream.entity.Item;
 import com.bidstream.repository.mongo.ItemRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,10 @@ public class ItemService {
 
     public List<Item> getItemsBySeller(String sellerEmail) {
         return itemRepository.findBySellerEmail(sellerEmail);
+    }
+
+    public Page<Item> getItemsBySeller(String sellerEmail, Pageable pageable) {
+        return itemRepository.findBySellerEmail(sellerEmail, pageable);
     }
 
     public Optional<Item> getItemById(String id) {

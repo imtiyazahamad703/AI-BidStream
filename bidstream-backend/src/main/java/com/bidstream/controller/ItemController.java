@@ -3,6 +3,9 @@ package com.bidstream.controller;
 import com.bidstream.dto.ItemRequestDto;
 import com.bidstream.entity.Item;
 import com.bidstream.service.ItemService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -40,11 +43,14 @@ public class ItemController {
 
     @GetMapping
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<List<Item>> getSellerItems() {
+    public ResponseEntity<Page<Item>> getSellerItems(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
         
-        List<Item> items = itemService.getItemsBySeller(sellerEmail);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Item> items = itemService.getItemsBySeller(sellerEmail, pageable);
         return ResponseEntity.ok(items);
     }
 
