@@ -44,13 +44,19 @@ public class ItemController {
     @GetMapping
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<Page<Item>> getSellerItems(
+            @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<Item> items = itemService.getItemsBySeller(sellerEmail, pageable);
+        Page<Item> items;
+        if (search != null && !search.trim().isEmpty()) {
+            items = itemService.searchItemsBySellerAndName(search, sellerEmail, pageable);
+        } else {
+            items = itemService.getItemsBySeller(sellerEmail, pageable);
+        }
         return ResponseEntity.ok(items);
     }
 

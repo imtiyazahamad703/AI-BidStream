@@ -36,6 +36,10 @@ public class ItemService {
         return itemRepository.findBySellerEmail(sellerEmail, pageable);
     }
 
+    public Page<Item> searchItemsBySellerAndName(String name, String sellerEmail, Pageable pageable) {
+        return itemRepository.findByNameContainingIgnoreCaseAndSellerEmail(name, sellerEmail, pageable);
+    }
+
     public Optional<Item> getItemById(String id) {
         return itemRepository.findById(id);
     }
