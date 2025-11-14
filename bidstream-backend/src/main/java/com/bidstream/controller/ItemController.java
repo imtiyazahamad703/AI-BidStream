@@ -1,6 +1,7 @@
 package com.bidstream.controller;
 
 import com.bidstream.dto.ItemRequestDto;
+import com.bidstream.dto.ItemResponseDto;
 import com.bidstream.entity.Item;
 import com.bidstream.service.ItemService;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,7 @@ public class ItemController {
 
     @PostMapping
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<Item> createItem(@Valid @RequestBody ItemRequestDto requestDto) {
+    public ResponseEntity<ItemResponseDto> createItem(@Valid @RequestBody ItemRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
         
@@ -38,12 +39,12 @@ public class ItemController {
         item.setAttributes(requestDto.getAttributes());
         
         Item createdItem = itemService.createItem(item, sellerEmail);
-        return ResponseEntity.ok(createdItem);
+        return ResponseEntity.ok(mapToDto(createdItem));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<Page<Item>> getSellerItems(
+    public ResponseEntity<Page<ItemResponseDto>> getSellerItems(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
@@ -61,12 +62,12 @@ public class ItemController {
         } else {
             items = itemService.getItemsBySeller(sellerEmail, pageable);
         }
-        return ResponseEntity.ok(items);
+        return ResponseEntity.ok(items.map(this::mapToDto));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<Item> getItemDetails(@PathVariable String id) {
+    public ResponseEntity<ItemResponseDto> getItemDetails(@PathVariable String id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
         
@@ -75,14 +76,14 @@ public class ItemController {
                     if (!item.getSellerEmail().equals(sellerEmail)) {
                         throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
                     }
-                    return ResponseEntity.ok(item);
+                    return ResponseEntity.ok(mapToDto(item));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<Item> updateItem(@PathVariable String id, @Valid @RequestBody ItemRequestDto requestDto) {
+    public ResponseEntity<ItemResponseDto> updateItem(@PathVariable String id, @Valid @RequestBody ItemRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String sellerEmail = authentication.getName();
         
@@ -93,7 +94,7 @@ public class ItemController {
         updatedData.setAttributes(requestDto.getAttributes());
 
         Item updatedItem = itemService.updateItem(id, updatedData, sellerEmail);
-        return ResponseEntity.ok(updatedItem);
+        return ResponseEntity.ok(mapToDto(updatedItem));
     }
 
     @DeleteMapping("/{id}")
@@ -104,5 +105,18 @@ public class ItemController {
         
         itemService.deleteItem(id, sellerEmail);
         return ResponseEntity.noContent().build();
+    }
+
+    private ItemResponseDto mapToDto(Item item) {
+        ItemResponseDto dto = new ItemResponseDto();
+        dto.setId(item.getId());
+        dto.setName(item.getName());
+        dto.setDescription(item.getDescription());
+        dto.setStartingPrice(item.getStartingPrice());
+        dto.setSellerEmail(item.getSellerEmail());
+        dto.setAttributes(item.getAttributes());
+        dto.setAuctionId(item.getAuctionId());
+        dto.setCreatedAt(item.getCreatedAt());
+        return dto;
     }
 }
