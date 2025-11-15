@@ -54,6 +54,20 @@ public class ItemControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("item123"))
-                .andExpect(jsonPath("$.name").value("Antique Clock"));
+                .andExpect(jsonPath("$.name").value("Antique Clock"))
+                .andExpect(jsonPath("$.status").value("AVAILABLE"));
+    }
+
+    @Test
+    @WithMockUser(username = "seller@test.com", roles = {"SELLER"})
+    void testCreateItem_ValidationFailed() throws Exception {
+        ItemRequestDto request = new ItemRequestDto();
+        // Missing name and starting price to trigger validation
+        request.setDescription("A beautiful antique clock.");
+
+        mockMvc.perform(post("/api/items")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 }
