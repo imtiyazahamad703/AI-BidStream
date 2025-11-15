@@ -1,5 +1,7 @@
 package com.bidstream.dto;
 
+import com.bidstream.entity.ItemStatus;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ public class ItemResponseDto {
     private String sellerEmail;
     private Map<String, Object> attributes;
     private Long auctionId;
+    private ItemStatus status;
     private LocalDateTime createdAt;
     
     // Getters and Setters
@@ -28,6 +31,8 @@ public class ItemResponseDto {
     public void setAttributes(Map<String, Object> attributes) { this.attributes = attributes; }
     public Long getAuctionId() { return auctionId; }
     public void setAuctionId(Long auctionId) { this.auctionId = auctionId; }
+    public ItemStatus getStatus() { return status; }
+    public void setStatus(ItemStatus status) { this.status = status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

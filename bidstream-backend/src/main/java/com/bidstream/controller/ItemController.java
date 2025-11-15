@@ -114,6 +114,7 @@ public class ItemController {
         dto.setSellerEmail(item.getSellerEmail());
         dto.setAttributes(item.getAttributes());
         dto.setAuctionId(item.getAuctionId());
+        dto.setStatus(item.getStatus());
         dto.setCreatedAt(item.getCreatedAt());
         return dto;
     }

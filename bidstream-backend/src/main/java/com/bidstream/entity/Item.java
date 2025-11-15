@@ -22,6 +22,8 @@ public class Item {
     // Linking to auction (Phase 4)
     private Long auctionId;
     
+    private ItemStatus status = ItemStatus.AVAILABLE;
+    
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getId() { return id; }
@@ -38,6 +40,8 @@ public class Item {
     public void setAttributes(Map<String, Object> attributes) { this.attributes = attributes; }
     public Long getAuctionId() { return auctionId; }
     public void setAuctionId(Long auctionId) { this.auctionId = auctionId; }
+    public ItemStatus getStatus() { return status; }
+    public void setStatus(ItemStatus status) { this.status = status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
