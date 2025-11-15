@@ -3,6 +3,7 @@ package com.bidstream.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import java.util.Map;
 
 public class ItemRequestDto {
@@ -17,6 +18,7 @@ public class ItemRequestDto {
     @Positive(message = "Starting price must be positive")
     private Double startingPrice;
     
+    @Size(max = 50, message = "Maximum 50 custom attributes allowed")
     private Map<String, Object> attributes;
 
     public String getName() { return name; }
