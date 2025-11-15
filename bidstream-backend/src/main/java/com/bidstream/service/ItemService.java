@@ -50,9 +50,8 @@ public class ItemService {
 
     public Item updateItem(String id, Item updatedData, String sellerEmail) {
         return itemRepository.findById(id).map(existingItem -> {
-            if (!existingItem.getSellerEmail().equals(sellerEmail)) {
-                throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
-            }
+            verifyItemOwnership(existingItem, sellerEmail);
+            
             if (updatedData.getName() != null) {
                 existingItem.setName(updatedData.getName());
             }
@@ -73,14 +72,18 @@ public class ItemService {
         Item item = itemRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Item not found"));
             
-        if (!item.getSellerEmail().equals(sellerEmail)) {
-            throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
-        }
+        verifyItemOwnership(item, sellerEmail);
         
         if (item.getAuctionId() != null) {
             throw new IllegalStateException("Cannot delete an item that is linked to an auction");
         }
         
         itemRepository.delete(item);
+    }
+    
+    public void verifyItemOwnership(Item item, String sellerEmail) {
+        if (!item.getSellerEmail().equals(sellerEmail)) {
+            throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
+        }
     }
 }

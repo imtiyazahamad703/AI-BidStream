@@ -73,9 +73,7 @@ public class ItemController {
         
         return itemService.getItemById(id)
                 .map(item -> {
-                    if (!item.getSellerEmail().equals(sellerEmail)) {
-                        throw new org.springframework.security.access.AccessDeniedException("You do not own this item");
-                    }
+                    itemService.verifyItemOwnership(item, sellerEmail);
                     return ResponseEntity.ok(mapToDto(item));
                 })
                 .orElse(ResponseEntity.notFound().build());
