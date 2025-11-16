@@ -15,6 +15,7 @@ public class ItemResponseDto {
     private Map<String, Object> attributes;
     private Long auctionId;
     private ItemStatus status;
+    private Boolean auctionReady;
     private LocalDateTime createdAt;
     
     // Getters and Setters
@@ -36,6 +37,8 @@ public class ItemResponseDto {
     public void setAuctionId(Long auctionId) { this.auctionId = auctionId; }
     public ItemStatus getStatus() { return status; }
     public void setStatus(ItemStatus status) { this.status = status; }
+    public Boolean getAuctionReady() { return auctionReady; }
+    public void setAuctionReady(Boolean auctionReady) { this.auctionReady = auctionReady; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

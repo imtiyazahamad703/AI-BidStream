@@ -47,6 +47,7 @@ public class PublicItemController {
         dto.setAttributes(item.getAttributes());
         dto.setAuctionId(item.getAuctionId());
         dto.setStatus(item.getStatus());
+        dto.setAuctionReady(item.getStatus() == com.bidstream.entity.ItemStatus.AVAILABLE);
         dto.setCreatedAt(item.getCreatedAt());
         return dto;
     }
