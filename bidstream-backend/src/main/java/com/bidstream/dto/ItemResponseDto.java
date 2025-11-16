@@ -10,6 +10,7 @@ public class ItemResponseDto {
     private String name;
     private String description;
     private Double startingPrice;
+    private Double currentPrice;
     private String sellerEmail;
     private Map<String, Object> attributes;
     private Long auctionId;
@@ -25,6 +26,8 @@ public class ItemResponseDto {
     public void setDescription(String description) { this.description = description; }
     public Double getStartingPrice() { return startingPrice; }
     public void setStartingPrice(Double startingPrice) { this.startingPrice = startingPrice; }
+    public Double getCurrentPrice() { return currentPrice; }
+    public void setCurrentPrice(Double currentPrice) { this.currentPrice = currentPrice; }
     public String getSellerEmail() { return sellerEmail; }
     public void setSellerEmail(String sellerEmail) { this.sellerEmail = sellerEmail; }
     public Map<String, Object> getAttributes() { return attributes; }

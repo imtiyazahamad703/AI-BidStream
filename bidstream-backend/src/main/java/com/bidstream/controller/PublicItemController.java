@@ -42,6 +42,7 @@ public class PublicItemController {
         dto.setName(item.getName());
         dto.setDescription(item.getDescription());
         dto.setStartingPrice(item.getStartingPrice());
+        dto.setCurrentPrice(item.getStartingPrice()); // defaults to starting price until bids exist
         dto.setSellerEmail(item.getSellerEmail());
         dto.setAttributes(item.getAttributes());
         dto.setAuctionId(item.getAuctionId());

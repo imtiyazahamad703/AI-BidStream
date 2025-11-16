@@ -111,6 +111,7 @@ public class ItemController {
         dto.setName(item.getName());
         dto.setDescription(item.getDescription());
         dto.setStartingPrice(item.getStartingPrice());
+        dto.setCurrentPrice(item.getStartingPrice());
         dto.setSellerEmail(item.getSellerEmail());
         dto.setAttributes(item.getAttributes());
         dto.setAuctionId(item.getAuctionId());
