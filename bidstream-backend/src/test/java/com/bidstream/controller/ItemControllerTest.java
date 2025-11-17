@@ -70,4 +70,17 @@ public class ItemControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @WithMockUser(username = "seller@test.com", roles = {"SELLER"})
+    void testUpdateItem_ValidationFailed() throws Exception {
+        ItemRequestDto request = new ItemRequestDto();
+        // Missing name and starting price to trigger validation on PUT
+        request.setDescription("Updated description without required fields.");
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/items/item123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
 }
