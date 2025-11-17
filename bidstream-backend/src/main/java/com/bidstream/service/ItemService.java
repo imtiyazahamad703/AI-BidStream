@@ -1,5 +1,10 @@
 package com.bidstream.service;
 
+/**
+ * Service for managing the seller item catalog workflow.
+ * Handles item creation, updates, deletion, and search/filtering.
+ * Serves as the foundation for Phase 4 Auction Management.
+ */
 import com.bidstream.entity.Item;
 import com.bidstream.repository.mongo.ItemRepository;
 import org.springframework.data.domain.Page;
