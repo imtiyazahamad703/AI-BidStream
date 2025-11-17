@@ -60,4 +60,14 @@ public class ItemServiceTest {
             itemService.deleteItem("1", "seller@test.com");
         });
     }
+
+    @Test
+    void testVerifyItemOwnership_AccessDenied() {
+        Item item = new Item();
+        item.setSellerEmail("owner@test.com");
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
+            itemService.verifyItemOwnership(item, "other@test.com");
+        });
+    }
 }
