@@ -20,6 +20,11 @@ public class AuctionService {
 
     @Transactional
     public Auction createAuction(Auction auction, String sellerEmail) {
+        // Validate scheduling parameters
+        if (auction.getStartTime().isAfter(auction.getEndTime()) || auction.getStartTime().isEqual(auction.getEndTime())) {
+            throw new IllegalArgumentException("Auction end time must be after start time");
+        }
+        
         // Find and verify item
         Item item = itemService.getItemById(auction.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
