@@ -40,4 +40,22 @@ public class AuctionSchedulerService {
             }
         }
     }
+
+    @Scheduled(fixedRate = 60000) // Runs every minute
+    public void completeExpiredAuctions() {
+        logger.info("Checking for expired active auctions to complete...");
+        List<Auction> activeAuctions = auctionRepository.findByStatus(AuctionStatus.ACTIVE);
+        
+        LocalDateTime now = LocalDateTime.now();
+        for (Auction auction : activeAuctions) {
+            if (auction.getEndTime().isBefore(now) || auction.getEndTime().isEqual(now)) {
+                try {
+                    auctionService.updateAuctionStatus(auction.getId(), AuctionStatus.COMPLETED);
+                    logger.info("Completed auction ID: {}", auction.getId());
+                } catch (Exception e) {
+                    logger.error("Failed to complete auction ID: {}", auction.getId(), e);
+                }
+            }
+        }
+    }
 }
