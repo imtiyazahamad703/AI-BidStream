@@ -54,4 +54,29 @@ public class AuctionService {
         
         return savedAuction;
     }
+
+    @Transactional
+    public void updateAuctionStatus(Long auctionId, AuctionStatus newStatus) {
+        Auction auction = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new IllegalArgumentException("Auction not found"));
+                
+        // State machine rules
+        if (auction.getStatus() == AuctionStatus.COMPLETED || auction.getStatus() == AuctionStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot change status of a completed or cancelled auction");
+        }
+        
+        if (newStatus == AuctionStatus.COMPLETED || newStatus == AuctionStatus.CANCELLED) {
+            Item item = itemService.getItemById(auction.getItemId()).orElse(null);
+            if (item != null) {
+                item.setStatus(newStatus == AuctionStatus.COMPLETED ? com.bidstream.entity.ItemStatus.SOLD : com.bidstream.entity.ItemStatus.AVAILABLE);
+                if (newStatus == AuctionStatus.CANCELLED) {
+                    item.setAuctionId(null);
+                }
+                itemService.updateItem(item.getId(), item, item.getSellerEmail());
+            }
+        }
+        
+        auction.setStatus(newStatus);
+        auctionRepository.save(auction);
+    }
 }
