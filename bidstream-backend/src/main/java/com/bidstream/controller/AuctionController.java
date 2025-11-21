@@ -36,6 +36,14 @@ public class AuctionController {
         return ResponseEntity.ok(mapToDto(createdAuction));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<AuctionResponseDto> getAuctionDetails(@PathVariable Long id) {
+        return auctionService.getAuctionById(id)
+                .map(this::mapToDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     private AuctionResponseDto mapToDto(Auction auction) {
         AuctionResponseDto dto = new AuctionResponseDto();
         dto.setId(auction.getId());

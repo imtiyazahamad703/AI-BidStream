@@ -79,4 +79,8 @@ public class AuctionService {
         auction.setStatus(newStatus);
         auctionRepository.save(auction);
     }
+    
+    public Optional<Auction> getAuctionById(Long id) {
+        return auctionRepository.findById(id);
+    }
 }
