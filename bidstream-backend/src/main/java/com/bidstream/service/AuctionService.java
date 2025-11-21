@@ -87,4 +87,8 @@ public class AuctionService {
     public Page<Auction> getActiveAuctions(Pageable pageable) {
         return auctionRepository.findByStatus(AuctionStatus.ACTIVE, pageable);
     }
+    
+    public Page<Auction> getAuctionsBySeller(String sellerEmail, Pageable pageable) {
+        return auctionRepository.findBySellerEmail(sellerEmail, pageable);
+    }
 }
