@@ -83,4 +83,8 @@ public class AuctionService {
     public Optional<Auction> getAuctionById(Long id) {
         return auctionRepository.findById(id);
     }
+    
+    public Page<Auction> getActiveAuctions(Pageable pageable) {
+        return auctionRepository.findByStatus(AuctionStatus.ACTIVE, pageable);
+    }
 }
