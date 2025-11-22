@@ -25,6 +25,11 @@ public class AuctionService {
             throw new IllegalArgumentException("Auction end time must be after start time");
         }
         
+        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(auction.getStartTime(), auction.getEndTime());
+        if (daysBetween > 14) {
+            throw new IllegalArgumentException("Auction duration cannot exceed 14 days");
+        }
+        
         // Find and verify item
         Item item = itemService.getItemById(auction.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
