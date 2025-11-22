@@ -91,4 +91,10 @@ public class AuctionService {
     public Page<Auction> getAuctionsBySeller(String sellerEmail, Pageable pageable) {
         return auctionRepository.findBySellerEmail(sellerEmail, pageable);
     }
+    
+    public void verifyAuctionOwnership(Auction auction, String sellerEmail) {
+        if (!auction.getSellerEmail().equals(sellerEmail)) {
+            throw new org.springframework.security.access.AccessDeniedException("You do not own this auction");
+        }
+    }
 }
