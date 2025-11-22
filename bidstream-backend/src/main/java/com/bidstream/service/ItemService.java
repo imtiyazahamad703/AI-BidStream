@@ -46,7 +46,7 @@ public class ItemService {
     }
 
     public Page<Item> filterItemsByPrice(String sellerEmail, Double minPrice, Double maxPrice, Pageable pageable) {
-        return itemRepository.findBySellerEmailAndStartingPriceBetween(sellerEmail, minPrice, maxPrice, Pageable pageable);
+        return itemRepository.findBySellerEmailAndStartingPriceBetween(sellerEmail, minPrice, maxPrice, pageable);
     }
 
     public Optional<Item> getItemById(String id) {

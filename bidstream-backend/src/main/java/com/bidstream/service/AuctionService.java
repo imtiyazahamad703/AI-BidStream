@@ -3,9 +3,14 @@ package com.bidstream.service;
 import com.bidstream.entity.Auction;
 import com.bidstream.entity.AuctionStatus;
 import com.bidstream.entity.Item;
+import com.bidstream.entity.ItemStatus;
 import com.bidstream.repository.jpa.AuctionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class AuctionService {
@@ -42,7 +47,7 @@ public class AuctionService {
             throw new IllegalStateException("Item is already linked to an auction");
         }
         
-        if (item.getStatus() != com.bidstream.entity.ItemStatus.AVAILABLE) {
+        if (item.getStatus() != ItemStatus.AVAILABLE) {
             throw new IllegalStateException("Item is not available for auction");
         }
         
@@ -54,7 +59,7 @@ public class AuctionService {
         
         // Link item to auction
         item.setAuctionId(savedAuction.getId());
-        item.setStatus(com.bidstream.entity.ItemStatus.IN_AUCTION);
+        item.setStatus(ItemStatus.IN_AUCTION);
         itemService.updateItem(item.getId(), item, sellerEmail); // Save changes to Mongo
         
         return savedAuction;
@@ -73,7 +78,7 @@ public class AuctionService {
         if (newStatus == AuctionStatus.COMPLETED || newStatus == AuctionStatus.CANCELLED) {
             Item item = itemService.getItemById(auction.getItemId()).orElse(null);
             if (item != null) {
-                item.setStatus(newStatus == AuctionStatus.COMPLETED ? com.bidstream.entity.ItemStatus.SOLD : com.bidstream.entity.ItemStatus.AVAILABLE);
+                item.setStatus(newStatus == AuctionStatus.COMPLETED ? ItemStatus.SOLD : ItemStatus.AVAILABLE);
                 if (newStatus == AuctionStatus.CANCELLED) {
                     item.setAuctionId(null);
                 }
