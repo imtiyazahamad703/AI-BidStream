@@ -31,11 +31,6 @@ public class AuctionService {
         validateAuctionStartTime(auction.getStartTime());
         validateAuctionEndTime(auction.getStartTime(), auction.getEndTime());
         
-        long daysBetween = ChronoUnit.DAYS.between(auction.getStartTime(), auction.getEndTime());
-        if (daysBetween > 14) {
-            throw new IllegalArgumentException("Auction duration cannot exceed 14 days");
-        }
-        
         // Find and verify item
         Item item = itemService.getItemById(auction.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
@@ -139,6 +134,10 @@ public class AuctionService {
         long minutesBetween = ChronoUnit.MINUTES.between(startTime, endTime);
         if (minutesBetween < 60) {
             throw new IllegalArgumentException("Auction must run for at least 1 hour");
+        }
+        long daysBetween = ChronoUnit.DAYS.between(startTime, endTime);
+        if (daysBetween > 14) {
+            throw new IllegalArgumentException("Auction duration cannot exceed 14 days");
         }
     }
 }
