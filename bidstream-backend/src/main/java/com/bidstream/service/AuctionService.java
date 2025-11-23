@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
@@ -26,11 +28,10 @@ public class AuctionService {
     @Transactional
     public Auction createAuction(Auction auction, String sellerEmail) {
         // Validate scheduling parameters
-        if (auction.getStartTime().isAfter(auction.getEndTime()) || auction.getStartTime().isEqual(auction.getEndTime())) {
-            throw new IllegalArgumentException("Auction end time must be after start time");
-        }
+        validateAuctionStartTime(auction.getStartTime());
+        validateAuctionEndTime(auction.getStartTime(), auction.getEndTime());
         
-        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(auction.getStartTime(), auction.getEndTime());
+        long daysBetween = ChronoUnit.DAYS.between(auction.getStartTime(), auction.getEndTime());
         if (daysBetween > 14) {
             throw new IllegalArgumentException("Auction duration cannot exceed 14 days");
         }
@@ -105,6 +106,39 @@ public class AuctionService {
     public void verifyAuctionOwnership(Auction auction, String sellerEmail) {
         if (!auction.getSellerEmail().equals(sellerEmail)) {
             throw new org.springframework.security.access.AccessDeniedException("You do not own this auction");
+        }
+    }
+
+    /**
+     * Validates auction start time:
+     * - Must not be null
+     * - Must be at least 5 minutes in the future
+     */
+    public void validateAuctionStartTime(LocalDateTime startTime) {
+        if (startTime == null) {
+            throw new IllegalArgumentException("Auction start time is required");
+        }
+        if (!startTime.isAfter(LocalDateTime.now().plusMinutes(5))) {
+            throw new IllegalArgumentException("Auction must start at least 5 minutes in the future");
+        }
+    }
+
+    /**
+     * Validates auction end time:
+     * - Must not be null
+     * - Must be strictly after start time
+     * - Minimum duration: 1 hour
+     */
+    public void validateAuctionEndTime(LocalDateTime startTime, LocalDateTime endTime) {
+        if (endTime == null) {
+            throw new IllegalArgumentException("Auction end time is required");
+        }
+        if (!endTime.isAfter(startTime)) {
+            throw new IllegalArgumentException("Auction end time must be after start time");
+        }
+        long minutesBetween = ChronoUnit.MINUTES.between(startTime, endTime);
+        if (minutesBetween < 60) {
+            throw new IllegalArgumentException("Auction must run for at least 1 hour");
         }
     }
 }
