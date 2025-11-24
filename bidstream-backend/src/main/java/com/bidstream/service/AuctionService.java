@@ -105,6 +105,17 @@ public class AuctionService {
     }
 
     /**
+     * Public auction search with optional status filter.
+     * If status is null, returns all auctions (paginated).
+     */
+    public Page<Auction> searchAuctions(AuctionStatus status, Pageable pageable) {
+        if (status != null) {
+            return auctionRepository.findByStatus(status, pageable);
+        }
+        return auctionRepository.findAll(pageable);
+    }
+
+    /**
      * Validates auction start time:
      * - Must not be null
      * - Must be at least 5 minutes in the future

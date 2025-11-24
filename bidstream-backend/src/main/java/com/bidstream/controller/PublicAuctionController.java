@@ -2,10 +2,12 @@ package com.bidstream.controller;
 
 import com.bidstream.dto.AuctionResponseDto;
 import com.bidstream.entity.Auction;
+import com.bidstream.entity.AuctionStatus;
 import com.bidstream.service.AuctionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +21,27 @@ public class PublicAuctionController {
         this.auctionService = auctionService;
     }
 
+    /** Returns only ACTIVE auctions */
     @GetMapping("/active")
     public ResponseEntity<Page<AuctionResponseDto>> getActiveAuctions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
         Page<Auction> activeAuctions = auctionService.getActiveAuctions(pageable);
         return ResponseEntity.ok(activeAuctions.map(this::mapToDto));
+    }
+
+    /**
+     * Search auctions with optional status filter and pagination.
+     * GET /api/public/auctions/search?status=ACTIVE&page=0&size=10
+     */
+    @GetMapping("/search")
+    public ResponseEntity<Page<AuctionResponseDto>> searchAuctions(
+            @RequestParam(required = false) AuctionStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(auctionService.searchAuctions(status, pageable).map(this::mapToDto));
     }
 
     private AuctionResponseDto mapToDto(Auction auction) {
