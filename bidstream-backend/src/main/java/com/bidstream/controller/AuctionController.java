@@ -70,7 +70,9 @@ public class AuctionController {
         dto.setEndTime(auction.getEndTime());
         dto.setStatus(auction.getStatus());
         dto.setCurrentHighestBid(auction.getCurrentHighestBid());
+        dto.setStartingPrice(auction.getCurrentHighestBid()); // starting price exposed via current bid baseline
         dto.setCreatedAt(auction.getCreatedAt());
+        // itemName populated lazily from item catalog if needed
         return dto;
     }
 }

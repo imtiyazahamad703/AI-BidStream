@@ -53,6 +53,7 @@ public class PublicAuctionController {
         dto.setEndTime(auction.getEndTime());
         dto.setStatus(auction.getStatus());
         dto.setCurrentHighestBid(auction.getCurrentHighestBid());
+        dto.setStartingPrice(auction.getCurrentHighestBid());
         dto.setCreatedAt(auction.getCreatedAt());
         return dto;
     }
