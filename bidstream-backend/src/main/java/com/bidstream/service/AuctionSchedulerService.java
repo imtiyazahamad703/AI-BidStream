@@ -16,23 +16,25 @@ public class AuctionSchedulerService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuctionSchedulerService.class);
     private final AuctionRepository auctionRepository;
-    private final AuctionService auctionService;
+    private final AuctionStateTransitionService transitionService;
 
-    public AuctionSchedulerService(AuctionRepository auctionRepository, AuctionService auctionService) {
+    public AuctionSchedulerService(AuctionRepository auctionRepository,
+                                   AuctionStateTransitionService transitionService) {
         this.auctionRepository = auctionRepository;
-        this.auctionService = auctionService;
+        this.transitionService = transitionService;
     }
 
-    @Scheduled(fixedRate = 60000) // Runs every minute
+    /** Runs every minute — activates auctions whose start time has passed */
+    @Scheduled(fixedRate = 60000)
     public void activateScheduledAuctions() {
         logger.info("Checking for scheduled auctions to activate...");
         List<Auction> scheduledAuctions = auctionRepository.findByStatus(AuctionStatus.SCHEDULED);
-        
+
         LocalDateTime now = LocalDateTime.now();
         for (Auction auction : scheduledAuctions) {
-            if (auction.getStartTime().isBefore(now) || auction.getStartTime().isEqual(now)) {
+            if (!auction.getStartTime().isAfter(now)) {
                 try {
-                    auctionService.updateAuctionStatus(auction.getId(), AuctionStatus.ACTIVE);
+                    transitionService.activate(auction.getId());
                     logger.info("Activated auction ID: {}", auction.getId());
                 } catch (Exception e) {
                     logger.error("Failed to activate auction ID: {}", auction.getId(), e);
@@ -41,16 +43,17 @@ public class AuctionSchedulerService {
         }
     }
 
-    @Scheduled(fixedRate = 60000) // Runs every minute
+    /** Runs every minute — completes auctions whose end time has passed */
+    @Scheduled(fixedRate = 60000)
     public void completeExpiredAuctions() {
         logger.info("Checking for expired active auctions to complete...");
         List<Auction> activeAuctions = auctionRepository.findByStatus(AuctionStatus.ACTIVE);
-        
+
         LocalDateTime now = LocalDateTime.now();
         for (Auction auction : activeAuctions) {
-            if (auction.getEndTime().isBefore(now) || auction.getEndTime().isEqual(now)) {
+            if (!auction.getEndTime().isAfter(now)) {
                 try {
-                    auctionService.updateAuctionStatus(auction.getId(), AuctionStatus.COMPLETED);
+                    transitionService.complete(auction.getId());
                     logger.info("Completed auction ID: {}", auction.getId());
                 } catch (Exception e) {
                     logger.error("Failed to complete auction ID: {}", auction.getId(), e);
