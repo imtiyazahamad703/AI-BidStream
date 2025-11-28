@@ -105,6 +105,35 @@ public class AuctionService {
     }
 
     /**
+     * Full cancellation workflow:
+     * 1. Verify ownership
+     * 2. Only SCHEDULED auctions can be cancelled by seller
+     * 3. Revert item status back to AVAILABLE
+     */
+    @Transactional
+    public void cancelAuction(Long auctionId, String sellerEmail) {
+        Auction auction = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new IllegalArgumentException("Auction not found: " + auctionId));
+
+        verifyAuctionOwnership(auction, sellerEmail);
+
+        if (auction.getStatus() != AuctionStatus.SCHEDULED) {
+            throw new IllegalStateException(
+                    "Only SCHEDULED auctions can be cancelled. Current status: " + auction.getStatus());
+        }
+
+        auction.setStatus(AuctionStatus.CANCELLED);
+        auctionRepository.save(auction);
+
+        // Revert item back to AVAILABLE
+        itemService.getItemById(auction.getItemId()).ifPresent(item -> {
+            item.setStatus(ItemStatus.AVAILABLE);
+            item.setAuctionId(null);
+            itemService.updateItem(item.getId(), item, sellerEmail);
+        });
+    }
+
+    /**
      * Public auction search with optional status filter.
      * If status is null, returns all auctions (paginated).
      */

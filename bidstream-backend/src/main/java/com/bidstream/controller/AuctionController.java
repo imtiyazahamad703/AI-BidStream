@@ -40,6 +40,15 @@ public class AuctionController {
         return ResponseEntity.ok(mapToDto(createdAuction));
     }
 
+    @DeleteMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<Void> cancelAuction(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String sellerEmail = authentication.getName();
+        auctionService.cancelAuction(id, sellerEmail);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<AuctionResponseDto> getAuctionDetails(@PathVariable Long id) {
         return auctionService.getAuctionById(id)
