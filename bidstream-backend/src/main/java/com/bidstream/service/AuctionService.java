@@ -145,6 +145,13 @@ public class AuctionService {
     }
 
     /**
+     * Internal method to persist auction state changes (like highest bid updates)
+     */
+    public Auction updateAuction(Auction auction) {
+        return auctionRepository.save(auction);
+    }
+
+    /**
      * Validates auction start time:
      * - Must not be null
      * - Must be at least 5 minutes in the future

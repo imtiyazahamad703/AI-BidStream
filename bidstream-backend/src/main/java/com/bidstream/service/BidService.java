@@ -11,10 +11,17 @@ public class BidService {
 
     private final BidRepository bidRepository;
     private final AuctionService auctionService;
+    private final AuctionParticipationService participationService;
+    private final HighestBidService highestBidService;
 
-    public BidService(BidRepository bidRepository, AuctionService auctionService) {
+    public BidService(BidRepository bidRepository, 
+                      AuctionService auctionService,
+                      AuctionParticipationService participationService,
+                      HighestBidService highestBidService) {
         this.bidRepository = bidRepository;
         this.auctionService = auctionService;
+        this.participationService = participationService;
+        this.highestBidService = highestBidService;
     }
 
     @Transactional
@@ -22,11 +29,26 @@ public class BidService {
         Auction auction = auctionService.getAuctionById(auctionId)
                 .orElseThrow(() -> new IllegalArgumentException("Auction not found: " + auctionId));
 
+        // Validate eligibility
+        participationService.validateParticipation(auctionId, bidderEmail);
+
+        // Validate minimum increment
+        Double currentHighest = highestBidService.getCurrentHighestBid(auctionId).orElse(0.0);
+        if (amount <= currentHighest) {
+            throw new IllegalArgumentException("Bid amount must be greater than current highest bid: " + currentHighest);
+        }
+
         Bid bid = new Bid();
         bid.setAuctionId(auction.getId());
         bid.setBidderEmail(bidderEmail);
         bid.setAmount(amount);
+        bid = bidRepository.save(bid);
 
-        return bidRepository.save(bid);
+        // Update auction
+        auction.setCurrentHighestBid(amount);
+        auction.setHighestBidderEmail(bidderEmail);
+        auctionService.updateAuction(auction); // Needs a method in AuctionService to save
+
+        return bid;
     }
 }
