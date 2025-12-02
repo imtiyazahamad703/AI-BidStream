@@ -51,4 +51,8 @@ public class BidService {
 
         return bid;
     }
+
+    public org.springframework.data.domain.Page<Bid> getAuctionBids(Long auctionId, org.springframework.data.domain.Pageable pageable) {
+        return bidRepository.findByAuctionId(auctionId, pageable);
+    }
 }
