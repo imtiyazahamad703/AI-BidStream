@@ -22,6 +22,7 @@ class BidPlacementValidationTest {
     private AuctionService auctionService;
     private AuctionParticipationService participationService;
     private HighestBidService highestBidService;
+    private RedisBidCacheService redisBidCacheService;
     private BidService bidService;
 
     @BeforeEach
@@ -30,8 +31,9 @@ class BidPlacementValidationTest {
         auctionService = Mockito.mock(AuctionService.class);
         participationService = Mockito.mock(AuctionParticipationService.class);
         highestBidService = Mockito.mock(HighestBidService.class);
+        redisBidCacheService = Mockito.mock(RedisBidCacheService.class);
         
-        bidService = new BidService(bidRepository, auctionService, participationService, highestBidService);
+        bidService = new BidService(bidRepository, auctionService, participationService, highestBidService, redisBidCacheService);
     }
 
     private Auction createAuction(Long id) {

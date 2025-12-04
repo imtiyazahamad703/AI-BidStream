@@ -13,15 +13,18 @@ public class BidService {
     private final AuctionService auctionService;
     private final AuctionParticipationService participationService;
     private final HighestBidService highestBidService;
+    private final RedisBidCacheService redisBidCacheService;
 
     public BidService(BidRepository bidRepository, 
                       AuctionService auctionService,
                       AuctionParticipationService participationService,
-                      HighestBidService highestBidService) {
+                      HighestBidService highestBidService,
+                      RedisBidCacheService redisBidCacheService) {
         this.bidRepository = bidRepository;
         this.auctionService = auctionService;
         this.participationService = participationService;
         this.highestBidService = highestBidService;
+        this.redisBidCacheService = redisBidCacheService;
     }
 
     @Transactional
@@ -48,6 +51,9 @@ public class BidService {
         auction.setCurrentHighestBid(amount);
         auction.setHighestBidderEmail(bidderEmail);
         auctionService.updateAuction(auction); // Needs a method in AuctionService to save
+
+        // Update Redis cache immediately for next concurrent validations
+        redisBidCacheService.updateHighestBid(auctionId, amount);
 
         return bid;
     }

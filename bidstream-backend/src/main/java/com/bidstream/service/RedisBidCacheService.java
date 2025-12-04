@@ -12,6 +12,7 @@ public class RedisBidCacheService {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisBidCacheService.class);
     private static final String HIGHEST_BID_KEY_PREFIX = "auction:%d:highestBid";
+    private static final String AUCTION_STATE_KEY_PREFIX = "auction:%d:state";
 
     private final StringRedisTemplate redisTemplate;
 
@@ -21,6 +22,10 @@ public class RedisBidCacheService {
 
     private String getHighestBidKey(Long auctionId) {
         return String.format(HIGHEST_BID_KEY_PREFIX, auctionId);
+    }
+    
+    private String getAuctionStateKey(Long auctionId) {
+        return String.format(AUCTION_STATE_KEY_PREFIX, auctionId);
     }
 
     /**
@@ -54,5 +59,20 @@ public class RedisBidCacheService {
         if (Boolean.TRUE.equals(set)) {
             logger.info("Initialized Redis highest bid for auction {} to {}", auctionId, initialBid);
         }
+    }
+
+    /**
+     * Gets the cached auction state (e.g., ACTIVE, COMPLETED).
+     */
+    public Optional<String> getAuctionState(Long auctionId) {
+        return Optional.ofNullable(redisTemplate.opsForValue().get(getAuctionStateKey(auctionId)));
+    }
+
+    /**
+     * Updates the cached auction state.
+     */
+    public void updateAuctionState(Long auctionId, String status) {
+        redisTemplate.opsForValue().set(getAuctionStateKey(auctionId), status);
+        logger.debug("Updated Redis auction state for auction {} to {}", auctionId, status);
     }
 }
