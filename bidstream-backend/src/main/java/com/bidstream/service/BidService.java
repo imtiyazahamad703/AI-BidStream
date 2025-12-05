@@ -14,48 +14,61 @@ public class BidService {
     private final AuctionParticipationService participationService;
     private final HighestBidService highestBidService;
     private final RedisBidCacheService redisBidCacheService;
+    private final AuctionLockService lockService;
 
     public BidService(BidRepository bidRepository, 
                       AuctionService auctionService,
                       AuctionParticipationService participationService,
                       HighestBidService highestBidService,
-                      RedisBidCacheService redisBidCacheService) {
+                      RedisBidCacheService redisBidCacheService,
+                      AuctionLockService lockService) {
         this.bidRepository = bidRepository;
         this.auctionService = auctionService;
         this.participationService = participationService;
         this.highestBidService = highestBidService;
         this.redisBidCacheService = redisBidCacheService;
+        this.lockService = lockService;
     }
 
     @Transactional
     public Bid placeBid(Long auctionId, String bidderEmail, Double amount) {
-        Auction auction = auctionService.getAuctionById(auctionId)
-                .orElseThrow(() -> new IllegalArgumentException("Auction not found: " + auctionId));
-
-        // Validate eligibility
-        participationService.validateParticipation(auctionId, bidderEmail);
-
-        // Validate minimum increment
-        Double currentHighest = highestBidService.getCurrentHighestBid(auctionId).orElse(0.0);
-        if (amount <= currentHighest) {
-            throw new IllegalArgumentException("Bid amount must be greater than current highest bid: " + currentHighest);
+        // Attempt to acquire lock for concurrent safety
+        boolean locked = lockService.tryLock(auctionId);
+        if (!locked) {
+            throw new IllegalStateException("High bid volume. Please try again in a moment.");
         }
 
-        Bid bid = new Bid();
-        bid.setAuctionId(auction.getId());
-        bid.setBidderEmail(bidderEmail);
-        bid.setAmount(amount);
-        bid = bidRepository.save(bid);
+        try {
+            Auction auction = auctionService.getAuctionById(auctionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Auction not found: " + auctionId));
 
-        // Update auction
-        auction.setCurrentHighestBid(amount);
-        auction.setHighestBidderEmail(bidderEmail);
-        auctionService.updateAuction(auction); // Needs a method in AuctionService to save
+            // Validate eligibility
+            participationService.validateParticipation(auctionId, bidderEmail);
 
-        // Update Redis cache immediately for next concurrent validations
-        redisBidCacheService.updateHighestBid(auctionId, amount);
+            // Validate minimum increment against current cached highest bid
+            Double currentHighest = highestBidService.getCurrentHighestBid(auctionId).orElse(0.0);
+            if (amount <= currentHighest) {
+                throw new IllegalArgumentException("Bid amount must be greater than current highest bid: " + currentHighest);
+            }
 
-        return bid;
+            Bid bid = new Bid();
+            bid.setAuctionId(auction.getId());
+            bid.setBidderEmail(bidderEmail);
+            bid.setAmount(amount);
+            bid = bidRepository.save(bid);
+
+            // Update auction
+            auction.setCurrentHighestBid(amount);
+            auction.setHighestBidderEmail(bidderEmail);
+            auctionService.updateAuction(auction); 
+
+            // Update Redis cache immediately for next concurrent validations
+            redisBidCacheService.updateHighestBid(auctionId, amount);
+
+            return bid;
+        } finally {
+            lockService.unlock(auctionId);
+        }
     }
 
     public org.springframework.data.domain.Page<Bid> getAuctionBids(Long auctionId, org.springframework.data.domain.Pageable pageable) {
