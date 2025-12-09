@@ -22,6 +22,7 @@ class ConcurrentBidProcessingTest {
     private HighestBidService highestBidService;
     private RedisBidCacheService redisBidCacheService;
     private AuctionLockService lockService;
+    private BidEventProducer bidEventProducer;
     private BidService bidService;
 
     @BeforeEach
@@ -32,9 +33,10 @@ class ConcurrentBidProcessingTest {
         highestBidService = Mockito.mock(HighestBidService.class);
         redisBidCacheService = Mockito.mock(RedisBidCacheService.class);
         lockService = Mockito.mock(AuctionLockService.class);
+        bidEventProducer = Mockito.mock(BidEventProducer.class);
 
         bidService = new BidService(bidRepository, auctionService, participationService, 
-                                    highestBidService, redisBidCacheService, lockService);
+                                    highestBidService, redisBidCacheService, lockService, bidEventProducer);
     }
 
     @Test

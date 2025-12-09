@@ -5,6 +5,7 @@ import com.bidstream.entity.Bid;
 import com.bidstream.repository.jpa.BidRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.bidstream.event.BidEvent;
 
 @Service
 public class BidService {
@@ -15,19 +16,22 @@ public class BidService {
     private final HighestBidService highestBidService;
     private final RedisBidCacheService redisBidCacheService;
     private final AuctionLockService lockService;
+    private final BidEventProducer bidEventProducer;
 
     public BidService(BidRepository bidRepository, 
                       AuctionService auctionService,
                       AuctionParticipationService participationService,
                       HighestBidService highestBidService,
                       RedisBidCacheService redisBidCacheService,
-                      AuctionLockService lockService) {
+                      AuctionLockService lockService,
+                      BidEventProducer bidEventProducer) {
         this.bidRepository = bidRepository;
         this.auctionService = auctionService;
         this.participationService = participationService;
         this.highestBidService = highestBidService;
         this.redisBidCacheService = redisBidCacheService;
         this.lockService = lockService;
+        this.bidEventProducer = bidEventProducer;
     }
 
     @Transactional
@@ -64,6 +68,10 @@ public class BidService {
 
             // Update Redis cache immediately for next concurrent validations
             redisBidCacheService.updateHighestBid(auctionId, amount);
+
+            // Publish event to Kafka
+            BidEvent event = new BidEvent(auctionId, bidderEmail, amount, java.time.LocalDateTime.now());
+            bidEventProducer.publishBidEvent(event);
 
             return bid;
         } finally {
