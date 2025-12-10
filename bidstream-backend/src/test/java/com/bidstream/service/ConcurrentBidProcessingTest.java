@@ -49,6 +49,7 @@ class ConcurrentBidProcessingTest {
         assertTrue(ex.getMessage().contains("High bid volume"));
         verify(lockService, never()).unlock(anyLong());
         verify(bidRepository, never()).save(any());
+        verify(bidEventProducer, never()).publishBidEvent(any());
     }
 
     @Test
@@ -63,7 +64,8 @@ class ConcurrentBidProcessingTest {
         bidService.placeBid(1L, "bidder@test.com", 150.0);
 
         verify(lockService).tryLock(1L);
-        verify(bidRepository).save(any());
+        verify(bidRepository, never()).save(any());
+        verify(bidEventProducer).publishBidEvent(any());
         verify(redisBidCacheService).updateHighestBid(1L, 150.0);
         verify(lockService).unlock(1L);
     }
@@ -78,6 +80,7 @@ class ConcurrentBidProcessingTest {
 
         verify(lockService).tryLock(1L);
         verify(bidRepository, never()).save(any());
+        verify(bidEventProducer, never()).publishBidEvent(any());
         verify(lockService).unlock(1L);
     }
 }

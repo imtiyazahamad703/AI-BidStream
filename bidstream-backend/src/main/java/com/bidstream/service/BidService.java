@@ -59,12 +59,6 @@ public class BidService {
             bid.setAuctionId(auction.getId());
             bid.setBidderEmail(bidderEmail);
             bid.setAmount(amount);
-            bid = bidRepository.save(bid);
-
-            // Update auction
-            auction.setCurrentHighestBid(amount);
-            auction.setHighestBidderEmail(bidderEmail);
-            auctionService.updateAuction(auction); 
 
             // Update Redis cache immediately for next concurrent validations
             redisBidCacheService.updateHighestBid(auctionId, amount);

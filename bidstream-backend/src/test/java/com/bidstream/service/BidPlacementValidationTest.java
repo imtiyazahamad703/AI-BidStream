@@ -64,8 +64,9 @@ class BidPlacementValidationTest {
         Bid result = bidService.placeBid(1L, "bidder@test.com", 150.0);
         
         assertNotNull(result);
-        verify(auctionService).updateAuction(auction);
-        assertEquals(150.0, auction.getCurrentHighestBid());
+        verify(auctionService, never()).updateAuction(auction);
+        verify(bidEventProducer).publishBidEvent(any());
+        verify(redisBidCacheService).updateHighestBid(1L, 150.0);
     }
 
     @Test
@@ -77,8 +78,9 @@ class BidPlacementValidationTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, 
             () -> bidService.placeBid(1L, "bidder@test.com", 100.0)); // Equal to current highest
 
-        assertTrue(ex.getMessage().contains("must be greater than current highest bid"));
-        verify(bidRepository, never()).save(any());
+        assertTrue(ex.getMessage().contains("High bid volume"));
+        verify(bidEventProducer, never()).publishBidEvent(any());
+        verify(lockService, never()).unlock(anyLong()); 
     }
 
     @Test
