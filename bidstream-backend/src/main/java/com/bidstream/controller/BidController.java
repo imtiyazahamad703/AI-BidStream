@@ -38,7 +38,11 @@ public class BidController {
         String bidderEmail = authentication.getName();
         
         Bid bid = bidService.placeBid(auctionId, bidderEmail, requestDto.getAmount());
-        return ResponseEntity.ok(mapToDto(bid));
+        
+        BidResponseDto response = mapToDto(bid);
+        response.setStatus(com.bidstream.entity.BidStatus.PROCESSING);
+        
+        return ResponseEntity.accepted().body(response);
     }
 
     @GetMapping
