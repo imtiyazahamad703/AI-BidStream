@@ -41,8 +41,15 @@ public class BidEventConsumer {
             // Re-sync cache just to be safe (already updated proactively by BidService)
             redisBidCacheService.updateHighestBid(event.getAuctionId(), event.getAmount());
             
+            if (event.getTrackingId() != null) {
+                redisBidCacheService.updateBidStatus(event.getTrackingId(), "ACCEPTED");
+            }
+            
             logger.debug("Successfully persisted bid and synchronized cache for auction {}", event.getAuctionId());
         } catch (Exception e) {
+            if (event.getTrackingId() != null) {
+                redisBidCacheService.updateBidStatus(event.getTrackingId(), "FAILED");
+            }
             logger.error("Error processing BidEvent for auction {}: {}", event.getAuctionId(), e.getMessage(), e);
             throw e; // Rely on Kafka retry mechanism
         }

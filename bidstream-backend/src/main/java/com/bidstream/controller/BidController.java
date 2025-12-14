@@ -41,6 +41,7 @@ public class BidController {
         
         BidResponseDto response = mapToDto(bid);
         response.setStatus(com.bidstream.entity.BidStatus.PROCESSING);
+        response.setTrackingId(bid.getTrackingId());
         
         return ResponseEntity.accepted().body(response);
     }
@@ -58,8 +59,17 @@ public class BidController {
 
     @GetMapping("/highest")
     public ResponseEntity<Double> getHighestBid(@PathVariable Long auctionId) {
-        Double highest = highestBidService.getCurrentHighestBid(auctionId).orElse(0.0);
-        return ResponseEntity.ok(highest);
+        Double highestBid = bidService.getHighestBid(auctionId);
+        return ResponseEntity.ok(highestBid);
+    }
+
+    @GetMapping("/status/{trackingId}")
+    public ResponseEntity<java.util.Map<String, String>> getBidStatus(@PathVariable Long auctionId, @PathVariable String trackingId) {
+        String status = bidService.getBidStatus(trackingId);
+        if (status == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(java.util.Map.of("trackingId", trackingId, "status", status));
     }
 
     private BidResponseDto mapToDto(Bid bid) {

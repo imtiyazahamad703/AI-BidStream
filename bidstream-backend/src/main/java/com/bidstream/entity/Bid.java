@@ -29,6 +29,9 @@ public class Bid {
     @Column(nullable = false)
     private BidStatus status = BidStatus.ACCEPTED;
 
+    @Transient
+    private String trackingId;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     
@@ -46,4 +49,12 @@ public class Bid {
     
     public BidStatus getStatus() { return status; }
     public void setStatus(BidStatus status) { this.status = status; }
+
+    public String getTrackingId() {
+        return trackingId;
+    }
+
+    public void setTrackingId(String trackingId) {
+        this.trackingId = trackingId;
+    }
 }

@@ -10,6 +10,9 @@ public class BidResponseDto {
     private Double amount;
     private LocalDateTime createdAt;
     private BidStatus status;
+    private String trackingId;
+
+    public BidResponseDto() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -28,4 +31,12 @@ public class BidResponseDto {
     
     public BidStatus getStatus() { return status; }
     public void setStatus(BidStatus status) { this.status = status; }
+
+    public String getTrackingId() {
+        return trackingId;
+    }
+
+    public void setTrackingId(String trackingId) {
+        this.trackingId = trackingId;
+    }
 }

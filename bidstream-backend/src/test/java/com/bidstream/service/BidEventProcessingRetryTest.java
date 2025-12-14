@@ -31,7 +31,7 @@ class BidEventProcessingRetryTest {
 
     @Test
     void consumeBidEvent_OnFailure_ThrowsExceptionForRetry() {
-        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, LocalDateTime.now());
+        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, LocalDateTime.now(), "track-123");
         
         // Simulate DB failure
         when(bidRepository.save(any(Bid.class))).thenThrow(new RuntimeException("DB Connection failed"));

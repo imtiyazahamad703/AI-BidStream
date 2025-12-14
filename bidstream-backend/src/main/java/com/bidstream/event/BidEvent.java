@@ -8,15 +8,17 @@ public class BidEvent {
     private String bidderEmail;
     private Double amount;
     private LocalDateTime timestamp;
+    private String trackingId;
 
     public BidEvent() {
     }
 
-    public BidEvent(Long auctionId, String bidderEmail, Double amount, LocalDateTime timestamp) {
+    public BidEvent(Long auctionId, String bidderEmail, Double amount, LocalDateTime timestamp, String trackingId) {
         this.auctionId = auctionId;
         this.bidderEmail = bidderEmail;
         this.amount = amount;
         this.timestamp = timestamp;
+        this.trackingId = trackingId;
     }
 
     public Long getAuctionId() {
@@ -49,6 +51,14 @@ public class BidEvent {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getTrackingId() {
+        return trackingId;
+    }
+
+    public void setTrackingId(String trackingId) {
+        this.trackingId = trackingId;
     }
 
     @Override

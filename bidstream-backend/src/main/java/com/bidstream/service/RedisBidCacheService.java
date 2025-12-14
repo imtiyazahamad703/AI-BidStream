@@ -52,6 +52,20 @@ public class RedisBidCacheService {
     }
 
     /**
+     * Updates the bid status in Redis.
+     */
+    public void updateBidStatus(String trackingId, String status) {
+        redisTemplate.opsForValue().set(String.format(BID_STATUS_KEY_PREFIX, trackingId), status);
+    }
+
+    /**
+     * Gets the bid status from Redis.
+     */
+    public String getBidStatus(String trackingId) {
+        return redisTemplate.opsForValue().get(String.format(BID_STATUS_KEY_PREFIX, trackingId));
+    }
+
+    /**
      * Initializes the highest bid state in Redis if it doesn't exist.
      */
     public void initializeAuctionState(Long auctionId, Double initialBid) {

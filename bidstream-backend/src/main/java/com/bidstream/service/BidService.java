@@ -63,14 +63,26 @@ public class BidService {
             // Update Redis cache immediately for next concurrent validations
             redisBidCacheService.updateHighestBid(auctionId, amount);
 
+            String trackingId = java.util.UUID.randomUUID().toString();
+            bid.setTrackingId(trackingId);
+            redisBidCacheService.updateBidStatus(trackingId, "PROCESSING");
+
             // Publish event to Kafka
-            BidEvent event = new BidEvent(auctionId, bidderEmail, amount, java.time.LocalDateTime.now());
+            BidEvent event = new BidEvent(auctionId, bidderEmail, amount, java.time.LocalDateTime.now(), trackingId);
             bidEventProducer.publishBidEvent(event);
 
             return bid;
         } finally {
             lockService.unlock(auctionId);
         }
+    }
+
+    public Double getHighestBid(Long auctionId) {
+        return highestBidService.getCurrentHighestBid(auctionId).orElse(0.0);
+    }
+
+    public String getBidStatus(String trackingId) {
+        return redisBidCacheService.getBidStatus(trackingId);
     }
 
     public org.springframework.data.domain.Page<Bid> getAuctionBids(Long auctionId, org.springframework.data.domain.Pageable pageable) {

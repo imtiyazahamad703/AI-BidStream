@@ -32,7 +32,7 @@ class BidEventConsumerTest {
     @Test
     void consumeBidEvent_Success_SavesBidAndUpdateCache() {
         LocalDateTime now = LocalDateTime.now();
-        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, now);
+        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, now, "track-123");
 
         bidEventConsumer.consumeBidEvent(event);
 
@@ -51,7 +51,7 @@ class BidEventConsumerTest {
     @Test
     void consumeBidEvent_Exception_ThrowsAndDoesNotUpdateCacheIfSaveFails() {
         LocalDateTime now = LocalDateTime.now();
-        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, now);
+        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, now, "track-123");
 
         when(bidRepository.save(any(Bid.class))).thenThrow(new RuntimeException("DB Error"));
 
