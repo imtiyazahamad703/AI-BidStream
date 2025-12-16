@@ -13,6 +13,7 @@ public class RedisBidCacheService {
     private static final Logger logger = LoggerFactory.getLogger(RedisBidCacheService.class);
     private static final String HIGHEST_BID_KEY_PREFIX = "auction:%d:highestBid";
     private static final String AUCTION_STATE_KEY_PREFIX = "auction:%d:state";
+    private static final String BID_STATUS_KEY_PREFIX = "bid_status:%s";
 
     private final StringRedisTemplate redisTemplate;
 
