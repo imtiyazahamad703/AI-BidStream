@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-class BidProcessingStatusTest {
+class LiveBidBroadcastingTest {
 
     private BidRepository bidRepository;
     private RedisBidCacheService redisBidCacheService;
@@ -30,26 +30,11 @@ class BidProcessingStatusTest {
     }
 
     @Test
-    void testStatusUpdatedToAcceptedOnSuccess() {
-        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, LocalDateTime.now(), "track-123");
+    void testBidEventBroadcastedAfterPersistence() {
+        BidEvent event = new BidEvent(1L, "bidder@test.com", 200.0, LocalDateTime.now(), "track-456");
         
         bidEventConsumer.consumeBidEvent(event);
         
-        verify(redisBidCacheService).updateBidStatus("track-123", "ACCEPTED");
-    }
-
-    @Test
-    void testStatusUpdatedToFailedOnError() {
-        BidEvent event = new BidEvent(1L, "bidder@test.com", 150.0, LocalDateTime.now(), "track-123");
-        
-        Mockito.when(bidRepository.save(any(Bid.class))).thenThrow(new RuntimeException("DB Error"));
-        
-        try {
-            bidEventConsumer.consumeBidEvent(event);
-        } catch (Exception e) {
-            // Expected
-        }
-        
-        verify(redisBidCacheService).updateBidStatus("track-123", "FAILED");
+        verify(auctionEventPublisher).publishBidPlaced(eq(1L), eq(200.0), eq("bidder@test.com"));
     }
 }

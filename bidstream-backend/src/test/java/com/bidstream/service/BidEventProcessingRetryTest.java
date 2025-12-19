@@ -19,14 +19,16 @@ class BidEventProcessingRetryTest {
 
     private BidRepository bidRepository;
     private RedisBidCacheService redisBidCacheService;
+    private AuctionEventPublisher auctionEventPublisher;
     private BidEventConsumer bidEventConsumer;
 
     @BeforeEach
     void setUp() {
         bidRepository = Mockito.mock(BidRepository.class);
         redisBidCacheService = Mockito.mock(RedisBidCacheService.class);
+        auctionEventPublisher = Mockito.mock(AuctionEventPublisher.class);
         
-        bidEventConsumer = new BidEventConsumer(bidRepository, redisBidCacheService);
+        bidEventConsumer = new BidEventConsumer(bidRepository, redisBidCacheService, auctionEventPublisher);
     }
 
     @Test

@@ -17,10 +17,12 @@ public class BidEventConsumer {
 
     private final BidRepository bidRepository;
     private final RedisBidCacheService redisBidCacheService;
+    private final AuctionEventPublisher auctionEventPublisher;
 
-    public BidEventConsumer(BidRepository bidRepository, RedisBidCacheService redisBidCacheService) {
+    public BidEventConsumer(BidRepository bidRepository, RedisBidCacheService redisBidCacheService, AuctionEventPublisher auctionEventPublisher) {
         this.bidRepository = bidRepository;
         this.redisBidCacheService = redisBidCacheService;
+        this.auctionEventPublisher = auctionEventPublisher;
     }
 
     @KafkaListener(topics = KafkaTopicConfig.BID_EVENTS_TOPIC, groupId = "${spring.kafka.consumer.group-id:bid-processor}")
@@ -44,6 +46,9 @@ public class BidEventConsumer {
             if (event.getTrackingId() != null) {
                 redisBidCacheService.updateBidStatus(event.getTrackingId(), "ACCEPTED");
             }
+            
+            // Broadcast live bid to connected WebSocket clients
+            auctionEventPublisher.publishBidPlaced(event.getAuctionId(), event.getAmount(), event.getBidderEmail());
             
             logger.debug("Successfully persisted bid and synchronized cache for auction {}", event.getAuctionId());
         } catch (Exception e) {

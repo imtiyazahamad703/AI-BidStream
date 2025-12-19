@@ -19,14 +19,15 @@ class BidEventConsumerTest {
 
     private BidRepository bidRepository;
     private RedisBidCacheService redisBidCacheService;
+    private AuctionEventPublisher auctionEventPublisher;
     private BidEventConsumer bidEventConsumer;
 
     @BeforeEach
     void setUp() {
-        bidRepository = Mockito.mock(BidRepository.class);
-        redisBidCacheService = Mockito.mock(RedisBidCacheService.class);
-        
-        bidEventConsumer = new BidEventConsumer(bidRepository, redisBidCacheService);
+        bidRepository = mock(BidRepository.class);
+        redisBidCacheService = mock(RedisBidCacheService.class);
+        auctionEventPublisher = mock(AuctionEventPublisher.class);
+        bidEventConsumer = new BidEventConsumer(bidRepository, redisBidCacheService, auctionEventPublisher);
     }
 
     @Test
