@@ -39,4 +39,14 @@ public class AuctionEventPublisher {
         );
         publishEvent(new AuctionEvent(auctionId, AuctionEvent.EventType.AUCTION_ENDED, payload));
     }
+
+    public void publishOutbidNotification(Long auctionId, String userEmail, Double newAmount) {
+        Map<String, Object> payload = Map.of(
+            "newAmount", newAmount,
+            "message", "You have been outbid!"
+        );
+        // Using user-specific destination
+        messagingTemplate.convertAndSendToUser(userEmail, "/queue/notifications", 
+            new AuctionEvent(auctionId, AuctionEvent.EventType.OUTBID, payload));
+    }
 }

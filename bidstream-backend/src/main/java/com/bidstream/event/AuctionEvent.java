@@ -10,7 +10,8 @@ public class AuctionEvent {
         AUCTION_STARTED,
         AUCTION_ENDING,
         AUCTION_ENDED,
-        BID_REJECTED
+        BID_REJECTED,
+        OUTBID
     }
 
     private Long auctionId;

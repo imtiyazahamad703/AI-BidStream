@@ -66,7 +66,7 @@ class BidPlacementValidationTest {
         assertNotNull(result);
         verify(auctionService, never()).updateAuction(auction);
         verify(bidEventProducer).publishBidEvent(any());
-        verify(redisBidCacheService).updateHighestBid(1L, 150.0);
+        verify(redisBidCacheService).updateHighestBid(1L, 150.0, "bidder@test.com");
     }
 
     @Test

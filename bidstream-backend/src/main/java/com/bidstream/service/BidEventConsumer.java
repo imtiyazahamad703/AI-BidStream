@@ -31,6 +31,10 @@ public class BidEventConsumer {
         logger.info("Consumed BidEvent: {}", event);
 
         try {
+            // Get previous highest bidder from DB/cache.
+            Bid latestBid = bidRepository.findTopByAuctionIdOrderByAmountDesc(event.getAuctionId());
+            String previousBidder = (latestBid != null && !latestBid.getBidderEmail().equals(event.getBidderEmail())) ? latestBid.getBidderEmail() : null;
+
             // Persist the bid event to MySQL
             Bid bid = new Bid();
             bid.setAuctionId(event.getAuctionId());
@@ -41,7 +45,7 @@ public class BidEventConsumer {
             bidRepository.save(bid);
             
             // Re-sync cache just to be safe (already updated proactively by BidService)
-            redisBidCacheService.updateHighestBid(event.getAuctionId(), event.getAmount());
+            redisBidCacheService.updateHighestBid(event.getAuctionId(), event.getAmount(), event.getBidderEmail());
             
             if (event.getTrackingId() != null) {
                 redisBidCacheService.updateBidStatus(event.getTrackingId(), "ACCEPTED");
@@ -49,6 +53,10 @@ public class BidEventConsumer {
             
             // Broadcast live bid to connected WebSocket clients
             auctionEventPublisher.publishBidPlaced(event.getAuctionId(), event.getAmount(), event.getBidderEmail());
+            
+            if (previousBidder != null) {
+                auctionEventPublisher.publishOutbidNotification(event.getAuctionId(), previousBidder, event.getAmount());
+            }
             
             logger.debug("Successfully persisted bid and synchronized cache for auction {}", event.getAuctionId());
         } catch (Exception e) {

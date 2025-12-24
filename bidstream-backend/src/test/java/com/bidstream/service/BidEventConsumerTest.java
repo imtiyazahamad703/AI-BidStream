@@ -46,7 +46,7 @@ class BidEventConsumerTest {
         assertEquals(150.0, savedBid.getAmount());
         assertEquals(now, savedBid.getCreatedAt());
 
-        verify(redisBidCacheService).updateHighestBid(1L, 150.0);
+        verify(redisBidCacheService).updateHighestBid(eq(1L), eq(200.0), anyString());
     }
 
     @Test
@@ -59,6 +59,6 @@ class BidEventConsumerTest {
         assertThrows(RuntimeException.class, () -> bidEventConsumer.consumeBidEvent(event));
 
         verify(bidRepository).save(any(Bid.class));
-        verify(redisBidCacheService, never()).updateHighestBid(anyLong(), anyDouble());
+        verify(redisBidCacheService, never()).updateHighestBid(anyLong(), anyDouble(), anyString());
     }
 }

@@ -12,6 +12,7 @@ public class RedisBidCacheService {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisBidCacheService.class);
     private static final String HIGHEST_BID_KEY_PREFIX = "auction:%d:highestBid";
+    private static final String HIGHEST_BIDDER_KEY_PREFIX = "auction:%d:highestBidder";
     private static final String AUCTION_STATE_KEY_PREFIX = "auction:%d:state";
     private static final String BID_STATUS_KEY_PREFIX = "bid_status:%s";
 
@@ -23,6 +24,10 @@ public class RedisBidCacheService {
 
     private String getHighestBidKey(Long auctionId) {
         return String.format(HIGHEST_BID_KEY_PREFIX, auctionId);
+    }
+    
+    private String getHighestBidderKey(Long auctionId) {
+        return String.format(HIGHEST_BIDDER_KEY_PREFIX, auctionId);
     }
     
     private String getAuctionStateKey(Long auctionId) {
@@ -45,11 +50,21 @@ public class RedisBidCacheService {
     }
 
     /**
+     * Gets the current highest bidder from Redis.
+     */
+    public Optional<String> getHighestBidder(Long auctionId) {
+        return Optional.ofNullable(redisTemplate.opsForValue().get(getHighestBidderKey(auctionId)));
+    }
+
+    /**
      * Updates the highest bid in Redis.
      */
-    public void updateHighestBid(Long auctionId, Double amount) {
+    public void updateHighestBid(Long auctionId, Double amount, String userEmail) {
         redisTemplate.opsForValue().set(getHighestBidKey(auctionId), amount.toString());
-        logger.debug("Updated Redis highest bid for auction {} to {}", auctionId, amount);
+        if (userEmail != null) {
+            redisTemplate.opsForValue().set(getHighestBidderKey(auctionId), userEmail);
+        }
+        logger.debug("Updated Redis highest bid for auction {} to {} by {}", auctionId, amount, userEmail);
     }
 
     /**

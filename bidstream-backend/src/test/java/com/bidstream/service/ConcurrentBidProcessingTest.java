@@ -66,7 +66,7 @@ class ConcurrentBidProcessingTest {
         verify(lockService).tryLock(1L);
         verify(bidRepository, never()).save(any());
         verify(bidEventProducer).publishBidEvent(any());
-        verify(redisBidCacheService).updateHighestBid(1L, 150.0);
+        redisBidCacheService.updateHighestBid(1L, 100.0, "user@test.com");
         verify(lockService).unlock(1L);
     }
 

@@ -57,7 +57,7 @@ class RedisBidCacheServiceTest {
 
     @Test
     void updateHighestBid_SetsValueInRedis() {
-        redisBidCacheService.updateHighestBid(1L, 200.0);
+        redisBidCacheService.updateHighestBid(1L, 250.0, "bidder@test.com");
 
         verify(valueOperations).set("auction:1:highestBid", "200.0");
     }

@@ -61,7 +61,7 @@ public class BidService {
             bid.setAmount(amount);
 
             // Update Redis cache immediately for next concurrent validations
-            redisBidCacheService.updateHighestBid(auctionId, amount);
+            redisBidCacheService.updateHighestBid(auctionId, amount, bidderEmail);
 
             String trackingId = java.util.UUID.randomUUID().toString();
             bid.setTrackingId(trackingId);
