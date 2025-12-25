@@ -34,7 +34,7 @@ public class HighestBidService {
         // Fallback to database
         Bid topBid = bidRepository.findTopByAuctionIdOrderByAmountDesc(auctionId);
         if (topBid != null) {
-            redisBidCacheService.updateHighestBid(auctionId, topBid.getAmount());
+            redisBidCacheService.updateHighestBid(auctionId, topBid.getAmount(), topBid.getBidderEmail());
             return Optional.of(topBid.getAmount());
         }
         
