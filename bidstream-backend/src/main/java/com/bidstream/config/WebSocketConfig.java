@@ -11,11 +11,25 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.config.ChannelRegistration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.bidstream.config.JwtUtil;
+import com.bidstream.repository.jpa.AuctionRepository;
+import com.bidstream.entity.Auction;
+import java.util.Optional;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -23,10 +37,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final AuctionRepository auctionRepository;
 
-    public WebSocketConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+    public WebSocketConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService, AuctionRepository auctionRepository) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        this.auctionRepository = auctionRepository;
     }
 
     @Override
@@ -68,6 +84,19 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                                         userDetails, null, userDetails.getAuthorities());
                                 accessor.setUser(auth);
                             }
+                        }
+                    }
+                } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                    String destination = accessor.getDestination();
+                    if (destination != null && destination.startsWith("/topic/auction.")) {
+                        try {
+                            Long auctionId = Long.parseLong(destination.substring("/topic/auction.".length()));
+                            Optional<Auction> auctionOpt = auctionRepository.findById(auctionId);
+                            if (auctionOpt.isEmpty() || auctionOpt.get().getStatus() == com.bidstream.entity.AuctionStatus.CANCELLED) {
+                                throw new IllegalArgumentException("Unauthorized subscription: Auction not accessible");
+                            }
+                        } catch (NumberFormatException e) {
+                            throw new IllegalArgumentException("Invalid auction ID");
                         }
                     }
                 }
