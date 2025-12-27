@@ -49,4 +49,13 @@ public class AuctionEventPublisher {
         messagingTemplate.convertAndSendToUser(userEmail, "/queue/notifications", 
             new AuctionEvent(auctionId, AuctionEvent.EventType.OUTBID, payload));
     }
+
+    public void publishBidRejectedNotification(Long auctionId, String userEmail, String reason) {
+        Map<String, Object> payload = Map.of(
+            "reason", reason != null ? reason : "Bid rejected",
+            "message", "Your bid could not be processed"
+        );
+        messagingTemplate.convertAndSendToUser(userEmail, "/queue/errors", 
+            new AuctionEvent(auctionId, AuctionEvent.EventType.BID_REJECTED, payload));
+    }
 }
