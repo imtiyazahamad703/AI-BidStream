@@ -20,10 +20,11 @@ public class AuctionEventPublisher {
         messagingTemplate.convertAndSend(destination, event);
     }
 
-    public void publishBidPlaced(Long auctionId, Double amount, String bidderEmail) {
+    public void publishBidPlaced(Long auctionId, Double amount, String bidderEmail, java.time.LocalDateTime timestamp) {
         Map<String, Object> payload = Map.of(
             "amount", amount,
-            "bidder", bidderEmail
+            "bidder", bidderEmail != null ? bidderEmail : "Anonymous",
+            "timestamp", timestamp != null ? timestamp.toString() : java.time.LocalDateTime.now().toString()
         );
         publishEvent(new AuctionEvent(auctionId, AuctionEvent.EventType.BID_PLACED, payload));
     }

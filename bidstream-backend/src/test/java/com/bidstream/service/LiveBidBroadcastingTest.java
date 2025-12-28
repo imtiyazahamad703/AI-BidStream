@@ -35,6 +35,6 @@ class LiveBidBroadcastingTest {
         
         bidEventConsumer.consumeBidEvent(event);
         
-        verify(auctionEventPublisher).publishBidPlaced(eq(1L), eq(200.0), eq("bidder@test.com"));
+        verify(auctionEventPublisher).publishBidPlaced(eq(1L), eq(200.0), eq("bidder@test.com"), any(java.time.LocalDateTime.class));
     }
 }

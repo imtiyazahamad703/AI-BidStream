@@ -52,7 +52,7 @@ public class BidEventConsumer {
             }
             
             // Broadcast live bid to connected WebSocket clients
-            auctionEventPublisher.publishBidPlaced(event.getAuctionId(), event.getAmount(), event.getBidderEmail());
+            auctionEventPublisher.publishBidPlaced(event.getAuctionId(), event.getAmount(), event.getBidderEmail(), event.getTimestamp());
             
             if (previousBidder != null) {
                 auctionEventPublisher.publishOutbidNotification(event.getAuctionId(), previousBidder, event.getAmount());

@@ -28,10 +28,10 @@ class AuctionEventIsolationTest {
     @Test
     void testEventsIsolatedByAuctionChannel() {
         // Publish bid for auction 1
-        auctionEventPublisher.publishBidPlaced(1L, 100.0, "user1@test.com");
+        auctionEventPublisher.publishBidPlaced(1L, 500.0, "user1@test.com", null);
         
-        // Publish bid for auction 2
-        auctionEventPublisher.publishBidPlaced(2L, 200.0, "user2@test.com");
+        // Publish event to auction 2
+        auctionEventPublisher.publishBidPlaced(2L, 750.0, "user2@test.com", null);
         
         ArgumentCaptor<AuctionEvent> eventCaptor1 = ArgumentCaptor.forClass(AuctionEvent.class);
         ArgumentCaptor<AuctionEvent> eventCaptor2 = ArgumentCaptor.forClass(AuctionEvent.class);
