@@ -33,7 +33,15 @@ public class WebSocketEventListener {
         String sessionId = headerAccessor.getSessionId();
         logger.info("Web socket connection disconnected: {}", sessionId);
         
-        participantTrackerService.removeParticipant(sessionId);
+        Long auctionId = participantTrackerService.removeParticipantAndGetAuctionId(sessionId);
+        if (auctionId != null) {
+            int count = participantTrackerService.getActiveBidderCount(auctionId);
+            auctionEventPublisher.publishEvent(new com.bidstream.event.AuctionEvent(
+                auctionId,
+                com.bidstream.event.AuctionEvent.EventType.PARTICIPANT_COUNT,
+                java.util.Map.of("activeBidders", count)
+            ));
+        }
     }
     
     @EventListener
@@ -52,7 +60,7 @@ public class WebSocketEventListener {
                 int count = participantTrackerService.getActiveBidderCount(auctionId);
                 auctionEventPublisher.publishEvent(new com.bidstream.event.AuctionEvent(
                     auctionId,
-                    com.bidstream.event.AuctionEvent.EventType.AUCTION_STARTED, // Or a new event type PARTICIPANT_COUNT
+                    com.bidstream.event.AuctionEvent.EventType.PARTICIPANT_COUNT,
                     java.util.Map.of("activeBidders", count)
                 ));
             } catch (NumberFormatException e) {

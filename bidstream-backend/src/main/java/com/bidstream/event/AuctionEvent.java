@@ -11,7 +11,8 @@ public class AuctionEvent {
         AUCTION_ENDING,
         AUCTION_ENDED,
         BID_REJECTED,
-        OUTBID
+        OUTBID,
+        PARTICIPANT_COUNT
     }
 
     private Long auctionId;

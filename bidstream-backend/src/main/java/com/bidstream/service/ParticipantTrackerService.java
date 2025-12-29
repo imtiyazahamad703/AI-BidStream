@@ -19,7 +19,7 @@ public class ParticipantTrackerService {
         sessionAuctionMap.put(sessionId, auctionId);
     }
 
-    public void removeParticipant(String sessionId) {
+    public Long removeParticipantAndGetAuctionId(String sessionId) {
         Long auctionId = sessionAuctionMap.remove(sessionId);
         if (auctionId != null) {
             Set<String> sessions = auctionParticipants.get(auctionId);
@@ -30,6 +30,11 @@ public class ParticipantTrackerService {
                 }
             }
         }
+        return auctionId;
+    }
+
+    public void removeParticipant(String sessionId) {
+        removeParticipantAndGetAuctionId(sessionId);
     }
 
     public int getActiveBidderCount(Long auctionId) {
