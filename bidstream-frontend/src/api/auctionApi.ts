@@ -38,5 +38,12 @@ export const auctionApi = {
   getAuctionDetails: async (id: number): Promise<Auction> => {
     const response = await axiosClient.get<Auction>(`/auctions/${id}`);
     return response.data;
+  },
+
+  searchActiveAuctions: async (query: string, category?: string): Promise<Auction[]> => {
+    const response = await axiosClient.get<Auction[]>('/auctions/search', {
+      params: { query, category }
+    });
+    return response.data;
   }
 };
