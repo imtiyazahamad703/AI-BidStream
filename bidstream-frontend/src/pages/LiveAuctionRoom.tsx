@@ -1,0 +1,43 @@
+import React from 'react';
+import { useParams } from 'react-router-dom';
+
+const LiveAuctionRoom: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+
+  return (
+    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-6rem)]">
+      <div className="lg:col-span-3 flex flex-col space-y-4">
+        {/* Main View Area */}
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 flex-1 flex flex-col">
+          <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
+            <h1 className="text-2xl font-bold text-white">Live Auction #{id}</h1>
+            <div className="flex items-center space-x-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </span>
+              <span className="text-red-400 font-semibold text-sm">LIVE</span>
+            </div>
+          </div>
+          
+          <div className="flex-1 bg-slate-900 rounded-lg flex items-center justify-center border border-slate-700">
+            <span className="text-slate-500">Product Image Stream</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="lg:col-span-1 bg-slate-800 border border-slate-700 rounded-xl flex flex-col overflow-hidden">
+        {/* Bid Stream Panel */}
+        <div className="p-4 border-b border-slate-700 bg-slate-900/50">
+          <h3 className="font-semibold text-white">Live Bids</h3>
+        </div>
+        <div className="flex-1 p-4 overflow-y-auto space-y-3">
+          {/* Placeholder for bids */}
+          <div className="text-slate-500 text-sm text-center py-4">Waiting for bids...</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LiveAuctionRoom;
