@@ -1,10 +1,17 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import BidHistory from '../components/BidHistory';
+import ParticipantInfo from '../components/ParticipantInfo';
 
 const mockBids = [
   { id: 1, auctionId: 1, bidderId: 101, amount: 250.00, timestamp: new Date().toISOString() },
   { id: 2, auctionId: 1, bidderId: 102, amount: 200.00, timestamp: new Date(Date.now() - 10000).toISOString() }
+];
+
+const mockParticipants = [
+  { id: 101, username: 'bidder1', isOnline: true },
+  { id: 102, username: 'bidder2', isOnline: false },
+  { id: 103, username: 'bidder3', isOnline: true }
 ];
 
 const LiveAuctionRoom: React.FC = () => {
@@ -35,6 +42,7 @@ const LiveAuctionRoom: React.FC = () => {
       <div className="lg:col-span-1">
         {/* Bid Stream Panel */}
         <BidHistory bids={mockBids} />
+        <ParticipantInfo participants={mockParticipants} />
       </div>
     </div>
   );
