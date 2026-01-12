@@ -55,12 +55,20 @@ const LiveAuctionRoom: React.FC = () => {
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 flex-1 flex flex-col">
           <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
             <h1 className="text-2xl font-bold text-white">Live Auction #{id}</h1>
-            <div className="flex items-center space-x-2">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-              </span>
-              <span className="text-red-400 font-semibold text-sm">LIVE</span>
+            <div className="flex items-center space-x-6">
+              <div className="bg-indigo-500/20 px-4 py-2 rounded-lg border border-indigo-500/30">
+                <span className="text-indigo-300 text-sm font-medium mr-2">Current Highest Bid:</span>
+                <span className="text-indigo-400 font-bold text-xl">
+                  ${bids.length > 0 ? bids[0].amount.toFixed(2) : '0.00'}
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <span className="text-red-400 font-semibold text-sm">LIVE</span>
+              </div>
             </div>
           </div>
           
