@@ -21,17 +21,32 @@ const LiveAuctionRoom: React.FC = () => {
   const token = useAuthStore(state => state.token);
   const [isConnected, setIsConnected] = useState(false);
 
+  const [bids, setBids] = useState(mockBids);
+  const [participants, setParticipants] = useState(mockParticipants);
+
   useEffect(() => {
     if (token) {
       wsService.connect(token);
       setIsConnected(true);
       
+      const bidSub = wsService.subscribe(`/topic/auctions/${id}/bids`, (message) => {
+        setBids(prev => [message, ...prev]);
+      });
+
+      const participantSub = wsService.subscribe(`/topic/auctions/${id}/participants`, (message) => {
+        if (message.type === 'JOIN' || message.type === 'LEAVE') {
+          // Handle participant updates
+        }
+      });
+
       return () => {
+        bidSub?.unsubscribe();
+        participantSub?.unsubscribe();
         wsService.disconnect();
         setIsConnected(false);
       };
     }
-  }, [token]);
+  }, [token, id]);
 
   return (
     <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-6rem)]">
@@ -57,8 +72,8 @@ const LiveAuctionRoom: React.FC = () => {
 
       <div className="lg:col-span-1">
         {/* Bid Stream Panel */}
-        <BidHistory bids={mockBids} />
-        <ParticipantInfo participants={mockParticipants} />
+        <BidHistory bids={bids} />
+        <ParticipantInfo participants={participants} />
       </div>
     </div>
   );
