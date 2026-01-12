@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BidHistory from '../components/BidHistory';
 import ParticipantInfo from '../components/ParticipantInfo';
+import { wsService } from '../api/stompClient';
+import useAuthStore from '../store/useAuthStore';
 
 const mockBids = [
   { id: 1, auctionId: 1, bidderId: 101, amount: 250.00, timestamp: new Date().toISOString() },
@@ -16,6 +18,20 @@ const mockParticipants = [
 
 const LiveAuctionRoom: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const token = useAuthStore(state => state.token);
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      wsService.connect(token);
+      setIsConnected(true);
+      
+      return () => {
+        wsService.disconnect();
+        setIsConnected(false);
+      };
+    }
+  }, [token]);
 
   return (
     <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-6rem)]">
