@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BidHistory from '../components/BidHistory';
 import ParticipantInfo from '../components/ParticipantInfo';
+import NotificationCenter from '../components/NotificationCenter';
 import { wsService } from '../api/stompClient';
 import useAuthStore from '../store/useAuthStore';
 
 const mockBids = [
   { id: 1, auctionId: 1, bidderId: 101, amount: 250.00, timestamp: new Date().toISOString() },
   { id: 2, auctionId: 1, bidderId: 102, amount: 200.00, timestamp: new Date(Date.now() - 10000).toISOString() }
+];
+
+const mockNotifications = [
+  { id: '1', message: 'Auction Started!', type: 'INFO' as const, timestamp: new Date().toISOString() }
 ];
 
 const mockParticipants = [
@@ -23,6 +28,7 @@ const LiveAuctionRoom: React.FC = () => {
 
   const [bids, setBids] = useState(mockBids);
   const [participants, setParticipants] = useState(mockParticipants);
+  const [notifications, setNotifications] = useState(mockNotifications);
 
   useEffect(() => {
     if (token) {
@@ -87,6 +93,8 @@ const LiveAuctionRoom: React.FC = () => {
         <BidHistory bids={bids} />
         <ParticipantInfo participants={participants} />
       </div>
+      
+      <NotificationCenter notifications={notifications} />
     </div>
   );
 };
