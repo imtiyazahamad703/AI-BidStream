@@ -56,6 +56,10 @@ const LiveAuctionRoom: React.FC = () => {
           <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
             <h1 className="text-2xl font-bold text-white">Live Auction #{id}</h1>
             <div className="flex items-center space-x-6">
+              <div className="bg-slate-900 px-4 py-2 rounded-lg border border-slate-600">
+                <span className="text-slate-400 text-sm font-medium mr-2">Time Remaining:</span>
+                <span className="text-white font-mono text-xl">00:14:59</span>
+              </div>
               <div className="bg-indigo-500/20 px-4 py-2 rounded-lg border border-indigo-500/30">
                 <span className="text-indigo-300 text-sm font-medium mr-2">Current Highest Bid:</span>
                 <span className="text-indigo-400 font-bold text-xl">
