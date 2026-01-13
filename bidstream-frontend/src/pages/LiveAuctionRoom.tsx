@@ -45,9 +45,19 @@ const LiveAuctionRoom: React.FC = () => {
         }
       });
 
+      const notificationSub = wsService.subscribe(`/user/queue/notifications`, (message) => {
+        setNotifications(prev => [{
+          id: Date.now().toString(),
+          message: message.content,
+          type: message.type || 'INFO',
+          timestamp: new Date().toISOString()
+        }, ...prev]);
+      });
+
       return () => {
         bidSub?.unsubscribe();
         participantSub?.unsubscribe();
+        notificationSub?.unsubscribe();
         wsService.disconnect();
         setIsConnected(false);
       };
