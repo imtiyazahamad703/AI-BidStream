@@ -108,9 +108,22 @@ const LiveAuctionRoom: React.FC = () => {
           <div className="flex-1 bg-slate-900 rounded-lg flex items-center justify-center border border-slate-700 relative overflow-hidden">
             <span className="text-slate-500">Product Image Stream</span>
             {auctionStatus === 'COMPLETED' && (
-              <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-10">
-                <h2 className="text-3xl font-bold text-white mb-2">Auction Ended</h2>
-                <p className="text-slate-300">This auction has concluded.</p>
+              <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-10 animate-fade-in">
+                {bids.length > 0 && bids[0].bidderId === 101 ? (
+                  <div className="flex flex-col items-center animate-bounce">
+                    <span className="text-6xl mb-4">🏆</span>
+                    <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-2">You Won!</h2>
+                    <p className="text-xl text-slate-200">Winning Bid: ${bids[0].amount.toFixed(2)}</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <h2 className="text-3xl font-bold text-white mb-2">Auction Ended</h2>
+                    <p className="text-slate-300">
+                      Winner: Bidder #{bids.length > 0 ? bids[0].bidderId : 'N/A'} 
+                      at ${bids.length > 0 ? bids[0].amount.toFixed(2) : '0.00'}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
