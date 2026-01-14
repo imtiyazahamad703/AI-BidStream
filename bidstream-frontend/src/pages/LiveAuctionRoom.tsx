@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import BidHistory from '../components/BidHistory';
 import ParticipantInfo from '../components/ParticipantInfo';
 import NotificationCenter from '../components/NotificationCenter';
+import BidPlacementForm from '../components/BidPlacementForm';
 import { wsService } from '../api/stompClient';
 import useAuthStore from '../store/useAuthStore';
 
@@ -29,6 +30,7 @@ const LiveAuctionRoom: React.FC = () => {
   const [bids, setBids] = useState(mockBids);
   const [participants, setParticipants] = useState(mockParticipants);
   const [notifications, setNotifications] = useState(mockNotifications);
+  const [auctionStatus, setAuctionStatus] = useState<'ACTIVE' | 'COMPLETED'>('ACTIVE');
 
   useEffect(() => {
     if (token) {
@@ -103,15 +105,32 @@ const LiveAuctionRoom: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex-1 bg-slate-900 rounded-lg flex items-center justify-center border border-slate-700">
+          <div className="flex-1 bg-slate-900 rounded-lg flex items-center justify-center border border-slate-700 relative overflow-hidden">
             <span className="text-slate-500">Product Image Stream</span>
+            {auctionStatus === 'COMPLETED' && (
+              <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-10">
+                <h2 className="text-3xl font-bold text-white mb-2">Auction Ended</h2>
+                <p className="text-slate-300">This auction has concluded.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="lg:col-span-1">
-        {/* Bid Stream Panel */}
-        <BidHistory bids={bids} />
+      <div className="lg:col-span-1 flex flex-col space-y-4">
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+          <BidPlacementForm 
+            currentBid={bids.length > 0 ? bids[0].amount : 0}
+            onPlaceBid={(amount) => {
+              wsService.send(`/app/auctions/${id}/bid`, { amount, bidderId: 101 });
+            }}
+            disabled={auctionStatus === 'COMPLETED'}
+          />
+        </div>
+        <div className="flex-1 min-h-[300px]">
+          {/* Bid Stream Panel */}
+          <BidHistory bids={bids} />
+        </div>
         <ParticipantInfo participants={participants} />
       </div>
       
