@@ -36,7 +36,18 @@ const LiveAuctionRoom: React.FC = () => {
       setIsConnected(true);
       
       const bidSub = wsService.subscribe(`/topic/auctions/${id}/bids`, (message) => {
-        setBids(prev => [message, ...prev]);
+        setBids(prev => {
+          // If the new bid is higher and from someone else, trigger outbid warning
+          if (prev.length > 0 && message.bidderId !== 101 /* Assuming current user is 101 */) {
+            setNotifications(n => [{
+              id: Date.now().toString(),
+              message: `You have been outbid! New highest bid is $${message.amount}`,
+              type: 'OUTBID',
+              timestamp: new Date().toISOString()
+            }, ...n]);
+          }
+          return [message, ...prev];
+        });
       });
 
       const participantSub = wsService.subscribe(`/topic/auctions/${id}/participants`, (message) => {
