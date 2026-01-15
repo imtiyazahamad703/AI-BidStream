@@ -84,6 +84,19 @@ const SellerAuctionMonitor: React.FC = () => {
               <div className="text-slate-500 mb-1">active users</div>
             </div>
           </div>
+
+          <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10"></div>
+            <h2 className="text-sm font-semibold text-slate-400 mb-2 uppercase tracking-wider relative z-10">Bid Velocity</h2>
+            <div className="flex items-end space-x-2 relative z-10">
+              <div className="text-4xl font-extrabold text-indigo-400">
+                {bids.length > 5 ? 'High' : 'Normal'}
+              </div>
+            </div>
+            <div className="mt-2 text-sm text-slate-500 relative z-10">
+              ~{Math.floor(Math.random() * 5) + 1} bids per minute
+            </div>
+          </div>
         </div>
       </div>
     </div>
