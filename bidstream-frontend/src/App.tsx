@@ -16,6 +16,7 @@ import AuctionListPage from './pages/seller/AuctionListPage';
 import ActiveAuctionsPage from './pages/ActiveAuctionsPage';
 import AuctionDetailPage from './pages/AuctionDetailPage';
 import { wsService } from './api/stompClient';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const App: React.FC = () => {
   const checkSession = useAuthStore((state) => state.checkSession);
@@ -43,50 +44,52 @@ const App: React.FC = () => {
   return (
     <Router>
       <Layout>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          
-          {/* Protected Routes (Placeholders for now) */}
-          <Route 
-            path="/auctions" 
-            element={
-              <ProtectedRoute allowedRoles={['BIDDER', 'SELLER']}>
-                <ActiveAuctionsPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/auctions/:id" 
-            element={
-              <ProtectedRoute allowedRoles={['BIDDER', 'SELLER']}>
-                <AuctionDetailPage />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Seller Routes */}
-          <Route 
-            path="/seller" 
-            element={
-              <ProtectedRoute allowedRoles={['SELLER']}>
-                <SellerLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="dashboard" element={<SellerDashboard />} />
-            <Route path="items" element={<ItemListPage />} />
-            <Route path="items/new" element={<ItemCreatePage />} />
-            <Route path="items/:id" element={<ItemDetailPage />} />
-            <Route path="auctions" element={<AuctionListPage />} />
-            <Route path="auctions/new" element={<AuctionCreatePage />} />
-          </Route>
+        <ErrorBoundary>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            
+            {/* Protected Routes (Placeholders for now) */}
+            <Route 
+              path="/auctions" 
+              element={
+                <ProtectedRoute allowedRoles={['BIDDER', 'SELLER']}>
+                  <ActiveAuctionsPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/auctions/:id" 
+              element={
+                <ProtectedRoute allowedRoles={['BIDDER', 'SELLER']}>
+                  <AuctionDetailPage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Seller Routes */}
+            <Route 
+              path="/seller" 
+              element={
+                <ProtectedRoute allowedRoles={['SELLER']}>
+                  <SellerLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="dashboard" element={<SellerDashboard />} />
+              <Route path="items" element={<ItemListPage />} />
+              <Route path="items/new" element={<ItemCreatePage />} />
+              <Route path="items/:id" element={<ItemDetailPage />} />
+              <Route path="auctions" element={<AuctionListPage />} />
+              <Route path="auctions/new" element={<AuctionCreatePage />} />
+            </Route>
 
-          {/* Fallback route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            {/* Fallback route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </ErrorBoundary>
       </Layout>
     </Router>
   );
