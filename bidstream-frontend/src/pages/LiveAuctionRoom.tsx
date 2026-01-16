@@ -78,7 +78,13 @@ const LiveAuctionRoom: React.FC = () => {
   }, [token, id]);
 
   return (
-    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-6rem)]">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-6rem)] relative">
+      {!isConnected && (
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-50 bg-amber-500 text-white px-6 py-2 rounded-b-lg shadow-lg flex items-center space-x-2 animate-pulse">
+          <span>⚠️</span>
+          <span className="font-medium text-sm">Connection lost. Attempting to reconnect...</span>
+        </div>
+      )}
       <div className="lg:col-span-3 flex flex-col space-y-4">
         {/* Main View Area */}
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 flex-1 flex flex-col">
