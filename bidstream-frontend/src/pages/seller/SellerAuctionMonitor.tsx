@@ -41,9 +41,22 @@ const SellerAuctionMonitor: React.FC = () => {
           </h1>
           <p className="text-slate-400 mt-1">Real-time overview of your active auction</p>
         </div>
-        <Link to="/seller/auctions" className="text-slate-300 hover:text-white underline text-sm">
-          Back to Auctions
-        </Link>
+        <div className="flex items-center space-x-4">
+          <button 
+            onClick={() => {
+              if(window.confirm('Are you sure you want to cancel this auction? This action cannot be undone.')) {
+                // Call cancel API
+                alert('Auction cancelled successfully');
+              }
+            }}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Cancel Auction
+          </button>
+          <Link to="/seller/auctions" className="text-slate-300 hover:text-white underline text-sm">
+            Back to Auctions
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
