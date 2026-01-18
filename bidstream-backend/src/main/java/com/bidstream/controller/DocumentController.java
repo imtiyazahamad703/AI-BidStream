@@ -11,6 +11,12 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class DocumentController {
 
+    private final com.bidstream.service.DocumentStorageService storageService;
+
+    public DocumentController(com.bidstream.service.DocumentStorageService storageService) {
+        this.storageService = storageService;
+    }
+
     @PostMapping("/upload/{auctionId}")
     public ResponseEntity<?> uploadDocument(@PathVariable Long auctionId, @RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
@@ -21,10 +27,12 @@ public class DocumentController {
             return ResponseEntity.badRequest().body(Map.of("error", "Only PDF files are allowed"));
         }
 
-        // Logic for handling the upload will be implemented in subsequent commits
+        String storedPath = storageService.storeFile(file);
+
         return ResponseEntity.ok(Map.of(
                 "message", "File uploaded successfully",
                 "fileName", file.getOriginalFilename(),
+                "storedPath", storedPath,
                 "auctionId", auctionId
         ));
     }
