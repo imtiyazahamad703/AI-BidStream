@@ -1,6 +1,7 @@
 package com.bidstream.service;
 
 import com.bidstream.domain.DocumentNode;
+import com.bidstream.repository.DocumentNodeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,13 +13,16 @@ public class DocumentProcessingService {
     private final PdfExtractionService pdfExtractionService;
     private final TextChunkingService textChunkingService;
     private final GeminiEmbeddingService geminiEmbeddingService;
+    private final DocumentNodeRepository documentNodeRepository;
 
     public DocumentProcessingService(PdfExtractionService pdfExtractionService,
                                      TextChunkingService textChunkingService,
-                                     GeminiEmbeddingService geminiEmbeddingService) {
+                                     GeminiEmbeddingService geminiEmbeddingService,
+                                     DocumentNodeRepository documentNodeRepository) {
         this.pdfExtractionService = pdfExtractionService;
         this.textChunkingService = textChunkingService;
         this.geminiEmbeddingService = geminiEmbeddingService;
+        this.documentNodeRepository = documentNodeRepository;
     }
 
     public List<DocumentNode> processDocument(Long auctionId, String filePath, String originalFileName) {
@@ -37,6 +41,7 @@ public class DocumentProcessingService {
             documentNodes.add(node);
         }
 
-        return documentNodes;
+        // 4. Store in MongoDB
+        return documentNodeRepository.saveAll(documentNodes);
     }
 }
