@@ -24,7 +24,10 @@ public class DocumentController {
     }
 
     @PostMapping("/upload/{auctionId}")
-    public ResponseEntity<?> uploadDocument(@PathVariable Long auctionId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadDocument(
+            @PathVariable Long auctionId, 
+            @RequestParam(value = "itemId", required = false) Long itemId,
+            @RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "File is empty"));
         }
