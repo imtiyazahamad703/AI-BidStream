@@ -12,9 +12,15 @@ import java.util.Map;
 public class DocumentController {
 
     private final com.bidstream.service.DocumentStorageService storageService;
+    private final com.bidstream.service.DocumentProcessingService processingService;
+    private final com.bidstream.service.VectorSearchService vectorSearchService;
 
-    public DocumentController(com.bidstream.service.DocumentStorageService storageService) {
+    public DocumentController(com.bidstream.service.DocumentStorageService storageService,
+                              com.bidstream.service.DocumentProcessingService processingService,
+                              com.bidstream.service.VectorSearchService vectorSearchService) {
         this.storageService = storageService;
+        this.processingService = processingService;
+        this.vectorSearchService = vectorSearchService;
     }
 
     @PostMapping("/upload/{auctionId}")
@@ -28,12 +34,28 @@ public class DocumentController {
         }
 
         String storedPath = storageService.storeFile(file);
+        processingService.processDocument(auctionId, storedPath, file.getOriginalFilename());
 
         return ResponseEntity.ok(Map.of(
-                "message", "File uploaded successfully",
+                "message", "File uploaded and processed successfully",
                 "fileName", file.getOriginalFilename(),
-                "storedPath", storedPath,
                 "auctionId", auctionId
+        ));
+    }
+
+    @GetMapping("/context/{auctionId}")
+    public ResponseEntity<?> getAuctionContext(@PathVariable Long auctionId, @RequestParam("query") String query) {
+        var results = vectorSearchService.searchSimilarDocuments(auctionId, query, 3);
+        
+        // Extract the text chunks to return
+        java.util.List<String> contexts = results.stream()
+                .map(com.bidstream.domain.DocumentNode::getContent)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "auctionId", auctionId,
+                "query", query,
+                "context", contexts
         ));
     }
 }
