@@ -15,6 +15,9 @@ public class DocumentNode {
 
     private Long auctionId;
     
+    // Associates this document directly with the auction item
+    private Long itemId;
+    
     private String originalFileName;
     
     private String content; // The text chunk
