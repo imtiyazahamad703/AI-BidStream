@@ -35,9 +35,19 @@ public class DocumentProcessingService {
         // 3. Generate Embeddings for each chunk
         List<DocumentNode> documentNodes = new ArrayList<>();
         
-        for (String chunk : chunks) {
+        for (int i = 0; i < chunks.size(); i++) {
+            String chunk = chunks.get(i);
             List<Double> embedding = geminiEmbeddingService.generateEmbedding(chunk);
             DocumentNode node = new DocumentNode(auctionId, originalFileName, chunk, embedding);
+            
+            // Persist additional metadata
+            java.util.Map<String, Object> metadata = new java.util.HashMap<>();
+            metadata.put("source", originalFileName);
+            metadata.put("chunkIndex", i);
+            metadata.put("totalChunks", chunks.size());
+            metadata.put("extractedAt", java.time.Instant.now().toString());
+            node.setMetadata(metadata);
+            
             documentNodes.add(node);
         }
 
