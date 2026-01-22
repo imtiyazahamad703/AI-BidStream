@@ -32,8 +32,14 @@ public class DocumentController {
             return ResponseEntity.badRequest().body(Map.of("error", "File is empty"));
         }
         
-        if (!file.getContentType().equals("application/pdf")) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Only PDF files are allowed"));
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.equals("application/pdf")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Unsupported file type. Only PDF documents are allowed for auction items."));
+        }
+        
+        long MAX_SIZE = 10 * 1024 * 1024; // 10MB
+        if (file.getSize() > MAX_SIZE) {
+            return ResponseEntity.badRequest().body(Map.of("error", "File exceeds maximum size of 10MB"));
         }
 
         String storedPath = storageService.storeFile(file);
