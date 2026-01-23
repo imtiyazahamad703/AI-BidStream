@@ -18,6 +18,9 @@ public class DocumentNode {
     // Associates this document directly with the auction item
     private Long itemId;
     
+    // Associates this chunk with a parent source document entity
+    private String sourceDocumentId;
+    
     private String originalFileName;
     
     private String content; // The text chunk
