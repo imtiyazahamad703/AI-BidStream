@@ -1,5 +1,6 @@
 package com.bidstream.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,11 +9,14 @@ import java.util.List;
 @Service
 public class TextChunkingService {
 
-    private static final int DEFAULT_CHUNK_SIZE = 1000;
-    private static final int DEFAULT_OVERLAP = 200;
+    @Value("${document.chunk.size:1000}")
+    private int defaultChunkSize;
+
+    @Value("${document.chunk.overlap:200}")
+    private int defaultOverlap;
 
     public List<String> chunkText(String text) {
-        return chunkText(text, DEFAULT_CHUNK_SIZE, DEFAULT_OVERLAP);
+        return chunkText(text, defaultChunkSize, defaultOverlap);
     }
 
     public List<String> chunkText(String text, int chunkSize, int overlap) {
