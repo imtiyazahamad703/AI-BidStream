@@ -21,7 +21,9 @@ public class TextChunkingService {
             return chunks;
         }
 
-        String[] words = text.split("\\s+");
+        // Clean up the text before chunking
+        String normalizedText = text.replaceAll("\\r\\n", "\n").replaceAll("\\n{2,}", "\n\n");
+        String[] words = normalizedText.split("\\s+");
         
         int currentIndex = 0;
         while (currentIndex < words.length) {
