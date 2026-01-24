@@ -37,7 +37,13 @@ public class DocumentProcessingService {
         
         for (int i = 0; i < chunks.size(); i++) {
             String chunk = chunks.get(i);
+            
+            // Generate embedding using the Gemini client
             List<Double> embedding = geminiEmbeddingService.generateEmbedding(chunk);
+            if (embedding == null || embedding.isEmpty()) {
+                throw new RuntimeException("Generated embedding is empty for chunk " + i);
+            }
+            
             DocumentNode node = new DocumentNode(auctionId, originalFileName, chunk, embedding);
             
             // Persist additional metadata
