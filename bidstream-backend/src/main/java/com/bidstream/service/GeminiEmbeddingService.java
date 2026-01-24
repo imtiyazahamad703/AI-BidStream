@@ -26,7 +26,14 @@ public class GeminiEmbeddingService {
         this.restTemplate = new RestTemplate();
     }
 
+    /**
+     * Calls the Gemini API to generate embeddings for a given text chunk.
+     */
     public List<Double> generateEmbedding(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
         String url = apiUrl + "?key=" + apiKey;
 
         HttpHeaders headers = new HttpHeaders();
