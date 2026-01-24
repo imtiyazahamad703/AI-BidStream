@@ -1,6 +1,9 @@
 package com.bidstream.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.IndexOperations;
 
 /**
  * Configuration for Vector Store integration.
@@ -10,10 +13,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class VectorStoreConfig {
 
-    // Setup for Spring AI Vector Store can be defined here
-    // e.g., configuring MongoDB Atlas Vector Search settings, collection names, and index settings
-    
     public VectorStoreConfig() {
         // Initialization logic for vector store
     }
+    
+    // In a production environment, we would use an initialization script or 
+    // MongoDB Atlas specific commands to ensure the vector search index exists.
+    // The index definition would look something like:
+    // {
+    //   "mappings": {
+    //     "dynamic": true,
+    //     "fields": {
+    //       "embedding": {
+    //         "dimensions": 768,
+    //         "similarity": "cosine",
+    //         "type": "knnVector"
+    //       }
+    //     }
+    //   }
+    // }
 }
