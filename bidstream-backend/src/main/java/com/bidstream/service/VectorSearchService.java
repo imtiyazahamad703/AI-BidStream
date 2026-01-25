@@ -27,6 +27,10 @@ public class VectorSearchService {
         // the $vectorSearch aggregation pipeline stage. Here we provide a simplified fallback
         // for standard Spring Data MongoDB to keep the pipeline compiling without Atlas.)
         
+        // Construct the vector similarity search query parameters
+        int numCandidates = limit * 10;
+        String indexName = "vector_index";
+        
         Query query = new Query();
         if (auctionId != null) {
             query.addCriteria(Criteria.where("auctionId").is(auctionId));
