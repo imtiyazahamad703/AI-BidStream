@@ -38,7 +38,19 @@ public class VectorSearchService {
         
         // This is a placeholder for actual vector distance calculation
         // In Atlas, this would be handled server-side via Vector Search indexes
-        query.limit(limit);
-        return mongoTemplate.find(query, DocumentNode.class);
+        // Execute query and map the resulting MongoDB documents back to DocumentNode chunks
+        List<DocumentNode> rawResults = mongoTemplate.find(query, DocumentNode.class);
+        
+        // Post-process mapping: Ensure chunks are properly populated
+        return rawResults.stream()
+                .map(node -> {
+                    // Mapping enhancement: Add similarity score or metadata if available from Vector Search
+                    if (node.getMetadata() == null) {
+                        node.setMetadata(new java.util.HashMap<>());
+                    }
+                    node.getMetadata().put("mappedFromVectorSearch", true);
+                    return node;
+                })
+                .toList();
     }
 }
