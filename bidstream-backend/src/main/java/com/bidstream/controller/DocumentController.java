@@ -67,4 +67,16 @@ public class DocumentController {
                 "context", contexts
         ));
     }
+
+    @GetMapping("/chunks/{auctionId}")
+    public ResponseEntity<?> getRelevantChunks(@PathVariable Long auctionId, @RequestParam("query") String query) {
+        var results = vectorSearchService.searchSimilarDocuments(auctionId, query, 5);
+        
+        // Return full chunk metadata and content
+        return ResponseEntity.ok(Map.of(
+                "auctionId", auctionId,
+                "query", query,
+                "chunks", results
+        ));
+    }
 }
