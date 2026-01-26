@@ -19,6 +19,13 @@ public class VectorSearchService {
         this.mongoTemplate = mongoTemplate;
     }
 
+    /**
+     * Performs a similarity search without auction context filtering.
+     */
+    public List<DocumentNode> searchSimilarDocuments(String queryText, int limit) {
+        return searchSimilarDocuments(null, queryText, limit);
+    }
+
     public List<DocumentNode> searchSimilarDocuments(Long auctionId, String queryText, int limit) {
         // 1. Convert query text to embedding
         List<Double> queryEmbedding = geminiEmbeddingService.generateEmbedding(queryText);
