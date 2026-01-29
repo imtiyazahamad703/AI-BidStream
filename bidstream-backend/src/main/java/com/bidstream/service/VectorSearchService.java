@@ -23,10 +23,14 @@ public class VectorSearchService {
      * Performs a similarity search without auction context filtering.
      */
     public List<DocumentNode> searchSimilarDocuments(String queryText, int limit) {
-        return searchSimilarDocuments(null, queryText, limit);
+        return searchSimilarDocuments(null, null, queryText, limit);
     }
 
     public List<DocumentNode> searchSimilarDocuments(Long auctionId, String queryText, int limit) {
+        return searchSimilarDocuments(auctionId, null, queryText, limit);
+    }
+
+    public List<DocumentNode> searchSimilarDocuments(Long auctionId, Long itemId, String queryText, int limit) {
         // 1. Convert query text to embedding
         List<Double> queryEmbedding = geminiEmbeddingService.generateEmbedding(queryText);
 
