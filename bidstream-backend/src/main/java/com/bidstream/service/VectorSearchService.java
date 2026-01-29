@@ -47,6 +47,11 @@ public class VectorSearchService {
             query.addCriteria(Criteria.where("auctionId").is(auctionId));
         }
         
+        // Filter by item scoped vectors
+        if (itemId != null) {
+            query.addCriteria(Criteria.where("itemId").is(itemId));
+        }
+        
         // This is a placeholder for actual vector distance calculation
         // In Atlas, this would be handled server-side via Vector Search indexes
         // Execute query and map the resulting MongoDB documents back to DocumentNode chunks
