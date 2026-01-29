@@ -24,4 +24,10 @@ class VectorSearchServiceTest {
         var results = vectorSearchService.searchSimilarDocuments(1L, "test query", 5);
         assertNotNull(results);
     }
+    
+    @Test
+    void searchSimilarDocuments_WithItemScope_ReturnsResults() {
+        var results = vectorSearchService.searchSimilarDocuments(1L, 100L, "test query", 5);
+        assertNotNull(results);
+    }
 }
