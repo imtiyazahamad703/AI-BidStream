@@ -6,6 +6,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
+/**
+ * Controller for handling the full document ingestion and retrieval pipeline.
+ * Coordinates uploading, text extraction, embedding generation, and vector similarity search.
+ */
 @RestController
 @RequestMapping("/api/documents")
 @CrossOrigin(origins = "*")
