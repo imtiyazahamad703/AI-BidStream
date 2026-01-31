@@ -20,4 +20,9 @@ public class AuctionAssistantService {
         
         return prompt.toString();
     }
+    
+    public String askAssistant(String userQuestion, String context) {
+        String prompt = generatePrompt(userQuestion, context);
+        return geminiChatService.generateChatResponse(prompt);
+    }
 }
