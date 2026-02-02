@@ -76,4 +76,21 @@ public class VectorSearchService {
     public List<Double> generateQuestionEmbedding(String question) {
         return geminiEmbeddingService.generateEmbedding(question);
     }
+    
+    /**
+     * Retrieves the most relevant chunks for a question and combines them into a single context string.
+     */
+    public String retrieveContext(Long auctionId, String question, int maxChunks) {
+        List<DocumentNode> results = searchSimilarDocuments(auctionId, null, question, maxChunks);
+        if (results == null || results.isEmpty()) {
+            return "No relevant context found.";
+        }
+        
+        StringBuilder contextBuilder = new StringBuilder();
+        for (DocumentNode node : results) {
+            contextBuilder.append(node.getContent()).append("\n\n");
+        }
+        
+        return contextBuilder.toString().trim();
+    }
 }
