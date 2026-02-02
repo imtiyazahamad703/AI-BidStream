@@ -31,8 +31,8 @@ public class VectorSearchService {
     }
 
     public List<DocumentNode> searchSimilarDocuments(Long auctionId, Long itemId, String queryText, int limit) {
-        // 1. Convert query text to embedding
-        List<Double> queryEmbedding = geminiEmbeddingService.generateEmbedding(queryText);
+        // 1. Convert query text to embedding using explicit question logic
+        List<Double> queryEmbedding = generateQuestionEmbedding(queryText);
 
         // 2. Perform Vector Search (Note: In a real MongoDB Atlas environment, we would use
         // the $vectorSearch aggregation pipeline stage. Here we provide a simplified fallback
@@ -68,5 +68,12 @@ public class VectorSearchService {
                     return node;
                 })
                 .toList();
+    }
+    
+    /**
+     * Generates a dense vector embedding specifically tuned for user questions.
+     */
+    public List<Double> generateQuestionEmbedding(String question) {
+        return geminiEmbeddingService.generateEmbedding(question);
     }
 }
