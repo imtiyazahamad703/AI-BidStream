@@ -28,8 +28,10 @@ public class AuctionAssistantService {
     
     /**
      * Complete RAG Pipeline: Retrieve context, generate prompt, and ask Gemini.
+     * Functions as the core chat service logic.
      */
     public String askAuctionAssistant(Long auctionId, String question, VectorSearchService vectorSearchService) {
+        // Chat service orchestrates retrieval and response generation
         String context = vectorSearchService.retrieveContext(auctionId, question, 3);
         return askAssistant(question, context);
     }
