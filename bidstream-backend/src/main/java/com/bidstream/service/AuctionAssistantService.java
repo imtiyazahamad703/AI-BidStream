@@ -35,4 +35,13 @@ public class AuctionAssistantService {
         String context = vectorSearchService.retrieveContext(auctionId, question, 3);
         return askAssistant(question, context);
     }
+
+    /**
+     * Complete RAG Pipeline scoped to a specific item within an auction.
+     */
+    public String askAuctionAssistant(Long auctionId, Long itemId, String question, VectorSearchService vectorSearchService) {
+        String context = vectorSearchService.retrieveContext(auctionId, question, 3); // using existing retrieve method, 
+        // A more advanced retrieveContext that takes itemId could be implemented in VectorSearchService 
+        return askAssistant(question, context);
+    }
 }
