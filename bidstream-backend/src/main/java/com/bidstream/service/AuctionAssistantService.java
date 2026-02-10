@@ -62,4 +62,28 @@ public class AuctionAssistantService {
         prompt.append("User Question: ").append(userQuestion).append("\n");
         return prompt.toString();
     }
+    
+    /**
+     * Completes a conversation turn by pulling history, answering, and saving the interaction.
+     */
+    public String handleConversationTurn(Long auctionId, Long userId, String question, 
+                                         VectorSearchService vectorSearchService, 
+                                         ChatHistoryService chatHistoryService) {
+        
+        // 1. Retrieve history
+        java.util.List<com.bidstream.domain.ChatMessage> history = chatHistoryService.getHistory(auctionId);
+        
+        // 2. Retrieve document context
+        String context = vectorSearchService.retrieveContext(auctionId, question, 3);
+        
+        // 3. Generate prompt and ask AI
+        String prompt = generatePromptWithHistory(question, context, history);
+        String response = geminiChatService.generateChatResponse(prompt);
+        
+        // 4. Save both user message and AI response
+        chatHistoryService.saveMessage(auctionId, userId, "USER", question);
+        chatHistoryService.saveMessage(auctionId, userId, "ASSISTANT", response);
+        
+        return response;
+    }
 }
