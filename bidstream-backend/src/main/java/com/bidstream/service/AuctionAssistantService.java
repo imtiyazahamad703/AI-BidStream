@@ -44,4 +44,22 @@ public class AuctionAssistantService {
         // A more advanced retrieveContext that takes itemId could be implemented in VectorSearchService 
         return askAssistant(question, context);
     }
+    
+    public String generatePromptWithHistory(String userQuestion, String context, java.util.List<com.bidstream.domain.ChatMessage> history) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("You are an expert auction assistant for BidStream.\n");
+        prompt.append("Use the following document context to answer the user's question.\n");
+        prompt.append("Context:\n").append(context).append("\n\n");
+        
+        if (history != null && !history.isEmpty()) {
+            prompt.append("Conversation History:\n");
+            for (com.bidstream.domain.ChatMessage msg : history) {
+                prompt.append(msg.getRole()).append(": ").append(msg.getContent()).append("\n");
+            }
+            prompt.append("\n");
+        }
+        
+        prompt.append("User Question: ").append(userQuestion).append("\n");
+        return prompt.toString();
+    }
 }
