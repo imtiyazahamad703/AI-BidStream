@@ -79,6 +79,10 @@ public class AuctionAssistantService {
         
         // 3. Generate prompt and ask AI
         String prompt = generatePromptWithHistory(question, context, history);
+        
+        // Cache miss indicator log
+        System.out.println("Cache miss for auctionId: " + auctionId + ", question: " + question);
+        
         String response = geminiChatService.generateChatResponse(prompt);
         
         // 4. Save both user message and AI response
