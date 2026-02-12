@@ -66,6 +66,7 @@ public class AuctionAssistantService {
     /**
      * Completes a conversation turn by pulling history, answering, and saving the interaction.
      */
+    @org.springframework.cache.annotation.Cacheable(value = "ai_responses", key = "#auctionId + '_' + #question")
     public String handleConversationTurn(Long auctionId, Long userId, String question, 
                                          VectorSearchService vectorSearchService, 
                                          ChatHistoryService chatHistoryService) {
