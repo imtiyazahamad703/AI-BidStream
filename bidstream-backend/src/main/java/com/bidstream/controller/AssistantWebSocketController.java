@@ -34,14 +34,27 @@ public class AssistantWebSocketController {
         String question = (String) payload.get("question");
         Long userId = payload.containsKey("userId") ? Long.valueOf(payload.get("userId").toString()) : 1L;
 
-        // Process question via RAG Pipeline
-        String response = auctionAssistantService.handleConversationTurn(auctionId, userId, question, vectorSearchService, chatHistoryService);
+        try {
+            // Process question via RAG Pipeline
+            String response = auctionAssistantService.handleConversationTurn(auctionId, userId, question, vectorSearchService, chatHistoryService);
 
-        // Publish to topic
-        messagingTemplate.convertAndSend("/topic/auction/" + auctionId + "/assistant", Map.of(
-                "question", question,
-                "response", response,
-                "auctionId", auctionId
-        ));
+            // Publish success to topic
+            messagingTemplate.convertAndSend("/topic/auction/" + auctionId + "/assistant", Map.of(
+                    "type", "ASSISTANT_RESPONSE",
+                    "question", question,
+                    "response", response,
+                    "auctionId", auctionId,
+                    "status", "SUCCESS"
+            ));
+        } catch (Exception e) {
+            // Publish error to topic
+            messagingTemplate.convertAndSend("/topic/auction/" + auctionId + "/assistant", Map.of(
+                    "type", "ASSISTANT_ERROR",
+                    "question", question,
+                    "error", e.getMessage(),
+                    "auctionId", auctionId,
+                    "status", "FAILED"
+            ));
+        }
     }
 }
