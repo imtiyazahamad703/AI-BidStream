@@ -47,11 +47,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        // Enable a simple in-memory message broker to route messages back to the client
-        // on destinations prefixed with "/topic"
-        config.enableSimpleBroker("/topic");
-        
-        // Prefix for messages that are bound for @MessageMapping-annotated methods
+        // Enable a simple memory-based message broker to carry the greeting messages back to the client on destinations prefixed with "/topic"
+        config.enableSimpleBroker("/topic", "/queue", "/topic/auction"); // added /topic/auction explicitly for clarity in AI responses
+        // Designates the prefix for messages that are bound for @MessageMapping-annotated methods in controller classes.
         config.setApplicationDestinationPrefixes("/app");
     }
 
