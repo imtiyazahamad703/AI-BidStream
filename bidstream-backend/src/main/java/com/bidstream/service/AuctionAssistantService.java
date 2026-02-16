@@ -64,6 +64,13 @@ public class AuctionAssistantService {
     }
     
     /**
+     * Integrates document context retrieval into the live RAG pipeline stream.
+     */
+    public String buildLiveAuctionContext(Long auctionId, String question, VectorSearchService vectorSearchService) {
+        return vectorSearchService.retrieveContext(auctionId, question, 3);
+    }
+    
+    /**
      * Completes a conversation turn by pulling history, answering, and saving the interaction.
      */
     @org.springframework.cache.annotation.Cacheable(value = "ai_responses", key = "#auctionId + '_' + #question")
