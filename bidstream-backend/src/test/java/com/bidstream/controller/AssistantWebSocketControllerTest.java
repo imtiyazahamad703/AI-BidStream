@@ -35,4 +35,23 @@ class AssistantWebSocketControllerTest {
 
         verify(messagingTemplate).convertAndSend(eq("/topic/auction/1/assistant"), any(Map.class));
     }
+    
+    @Test
+    void endToEndAuctionAssistantWorkflow_CompletesFullCycle() {
+        AuctionAssistantService auctionAssistantService = mock(AuctionAssistantService.class);
+        VectorSearchService vectorSearchService = mock(VectorSearchService.class);
+        ChatHistoryService chatHistoryService = mock(ChatHistoryService.class);
+        SimpMessagingTemplate messagingTemplate = mock(SimpMessagingTemplate.class);
+
+        AssistantWebSocketController controller = new AssistantWebSocketController(
+                auctionAssistantService, vectorSearchService, chatHistoryService, messagingTemplate);
+
+        when(auctionAssistantService.handleConversationTurn(anyLong(), anyLong(), anyString(), any(), any()))
+                .thenReturn("Full Workflow AI Response");
+
+        controller.handleAuctionQuestion(99L, Map.of("question", "What is the end time?", "userId", 50L));
+
+        verify(auctionAssistantService).handleConversationTurn(eq(99L), eq(50L), eq("What is the end time?"), eq(vectorSearchService), eq(chatHistoryService));
+        verify(messagingTemplate).convertAndSend(eq("/topic/auction/99/assistant"), any(Map.class));
+    }
 }
