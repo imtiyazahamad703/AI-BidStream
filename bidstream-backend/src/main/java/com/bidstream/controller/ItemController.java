@@ -37,6 +37,7 @@ public class ItemController {
         item.setDescription(requestDto.getDescription());
         item.setStartingPrice(requestDto.getStartingPrice());
         item.setAttributes(requestDto.getAttributes());
+        item.setImageData(requestDto.getImageData());
         
         Item createdItem = itemService.createItem(item, sellerEmail);
         return ResponseEntity.ok(mapToDto(createdItem));
@@ -116,6 +117,7 @@ public class ItemController {
         dto.setAttributes(item.getAttributes());
         dto.setAuctionId(item.getAuctionId());
         dto.setStatus(item.getStatus());
+        dto.setImageData(item.getImageData());
         dto.setAuctionReady(item.getStatus() == com.bidstream.entity.ItemStatus.AVAILABLE);
         dto.setCreatedAt(item.getCreatedAt());
         return dto;

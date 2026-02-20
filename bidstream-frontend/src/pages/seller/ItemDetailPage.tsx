@@ -15,7 +15,7 @@ const ItemDetailPage: React.FC = () => {
     const fetchItemDetails = async () => {
       try {
         if (!id) return;
-        const data = await itemApi.getItemDetails(parseInt(id));
+        const data = await itemApi.getItemDetails(id);
         setItem(data);
       } catch (err: any) {
         setError('Failed to load item details.');
@@ -32,7 +32,7 @@ const ItemDetailPage: React.FC = () => {
     
     setIsDeleting(true);
     try {
-      await itemApi.deleteItem(parseInt(id));
+      await itemApi.deleteItem(id);
       navigate('/seller/items');
     } catch (err: any) {
       setError('Failed to delete item.');
@@ -71,6 +71,12 @@ const ItemDetailPage: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
+          {/* Item Image */}
+          {item.imageData && (
+            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-md">
+              <img src={item.imageData} alt={item.title} className="w-full max-h-96 object-contain bg-slate-900" />
+            </div>
+          )}
           <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 shadow-md">
             <h2 className="text-xl font-bold text-white mb-4">Description</h2>
             <p className="text-slate-300 whitespace-pre-wrap">{item.description}</p>
@@ -87,7 +93,7 @@ const ItemDetailPage: React.FC = () => {
               </div>
               <div>
                 <span className="block text-sm text-slate-400">Condition</span>
-                <span className="text-lg text-white">{item.condition}</span>
+                <span className="text-lg text-white">{item.attributes?.condition || 'N/A'}</span>
               </div>
               <div>
                 <span className="block text-sm text-slate-400">Listed On</span>

@@ -21,13 +21,13 @@ export interface CreateAuctionData {
 
 export const auctionApi = {
   getSellerAuctions: async (): Promise<Auction[]> => {
-    const response = await axiosClient.get<Auction[]>('/auctions/seller');
-    return response.data;
+    const response = await axiosClient.get<any>('/auctions');
+    return response.data.content;
   },
 
   getActiveAuctions: async (): Promise<Auction[]> => {
-    const response = await axiosClient.get<Auction[]>('/auctions/active');
-    return response.data;
+    const response = await axiosClient.get<any>('/public/auctions/active');
+    return response.data.content;
   },
   
   createAuction: async (data: CreateAuctionData): Promise<Auction> => {
@@ -41,9 +41,9 @@ export const auctionApi = {
   },
 
   searchActiveAuctions: async (query: string, category?: string): Promise<Auction[]> => {
-    const response = await axiosClient.get<Auction[]>('/auctions/search', {
+    const response = await axiosClient.get<any>('/public/auctions/search', {
       params: { query, category }
     });
-    return response.data;
+    return response.data.content;
   }
 };

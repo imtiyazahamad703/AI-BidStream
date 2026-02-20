@@ -58,8 +58,12 @@ const ItemListPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
             <div key={item.id} className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden flex flex-col">
-              <div className="h-48 bg-slate-700 flex items-center justify-center">
-                <span className="text-slate-500">No Image</span>
+              <div className="h-48 bg-slate-700 flex items-center justify-center overflow-hidden">
+                {item.imageData ? (
+                  <img src={item.imageData} alt={item.title} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-slate-500">No Image</span>
+                )}
               </div>
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
